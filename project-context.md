@@ -1,4 +1,4 @@
-# Project Context: Last-Mile Delivery Tracker
+# Project Context: Board Friends
 ## Product
 A web system for letting users add board games
 to their catalog and borrow board games from
