@@ -1,21 +1,20 @@
 # Project Context: Last-Mile Delivery Tracker
 ## Product
-A web and mobile system for tracking packages from the local
-delivery hub to the customer information.
-- Each status update records a time and location.
-- Customer service can view the delivery-event history.
+A web system for letting users add board games
+to their catalog and borrow board games from
+their friend's catalogs.
+- Each user has a catalog of board games.
+- Users can add friends and borrow from eachothers catalogs
 ## Constraints
-- Do not include real customer addresses, names, or package IDs
+- Do not include real customer addresses or names
 in GenAI prompts.
-- Status changes must preserve an audit history.
-- The system must support poor cellular connectivity for drivers.
-- Managers approve operational policies; the team does not invent
-them.
+- Must be some way to know if a board game has already been borrowed.
+- There must be some way for users to control who can see their catalogs.
 ## Open questions
-- Which delivery statuses are allowed?
-- How long should a driver be able to work offline?
-- When should the system notify a customer about a delay?
-- What information may managers see about driver performance?
+- Who is allowed to see a user's catalog?
+- How to insure user's are updating their catalog?
+- How to implement community groups?
+- What features should community groups have?
 ## Task prompt pattern
 Using only the evidence and confirmed decisions above:
 1. Draft one user story for a named user.
