@@ -1,4 +1,4 @@
-# Project Context: Board Friends
+# Project Context: Board Buddies
 ## Product
 A web system for letting users add board games
 to their catalog and borrow board games from
