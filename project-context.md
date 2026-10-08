@@ -22,3 +22,6 @@ Using only the evidence and confirmed decisions above:
 3. List assumptions separately.
 4. List questions that require a manager or stakeholder decision.
 5. Do not invent policy, timing, or privacy requirements.
+## Attributes
+1. Maintanability
+2. Scalable
