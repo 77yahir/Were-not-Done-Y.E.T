@@ -1,7 +1,4 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import Boardgames from './Boardgames'
 import './App.css'
 
 function App() {
@@ -9,6 +6,7 @@ function App() {
   return (
     <>
       <p> Board Buddies</p>
+      <Boardgames />
     </>
   )
 }
