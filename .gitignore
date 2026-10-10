@@ -1,0 +1,22 @@
+# Root dependencies and environments
+node_modules/
+.venv/
+
+# Environment variables anywhere
+.env
+.env.*
+!.env.example
+
+# Generated files
+dist/
+build/
+coverage/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Operating system files
+.DS_Store
+Thumbs.db
