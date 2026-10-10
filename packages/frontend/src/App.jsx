@@ -1,14 +1,13 @@
-import Boardgames from './Boardgames'
-import './App.css'
+import Boardgames from "./pages/Boardgames";
+import "./App.css";
 
 function App() {
-
   return (
     <>
-      <p> Board Buddies</p>
+      <h1>Board Buddies</h1>
       <Boardgames />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
