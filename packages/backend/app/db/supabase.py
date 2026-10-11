@@ -18,3 +18,16 @@ def get_supabase_client() -> Client:
         )
     
     return create_client(url, key)
+
+def get_user_supabase_client(access_token: str) -> Client:
+    """
+    Create a Supabase client authenticated
+    as the current user
+    """
+    
+    client = get_supabase_client()
+    client.postgrest.auth(access_token)
+    
+    return client
+
+    
