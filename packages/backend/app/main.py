@@ -2,9 +2,12 @@ from fastapi import FastAPI, Depends
 
 from app.core.auth import get_current_user
 from app.routers.communities import router as community_router
+from app.routers.friends import router as friend_router
 
 app = FastAPI(title="Board Buddies API")
 app.include_router(community_router)
+app.include_router(friend_router)
+
 
 @app.get("/api/health")
 def health_check():
