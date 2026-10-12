@@ -26,6 +26,10 @@ def test_config():
 
     return url, anon_key, service_key
 
+@pytest.fixture
+def anonymous_client(test_config):
+    url, anon_key, _ = test_config
+    return create_client(url, anon_key)
 
 @pytest.fixture
 def test_users(test_config):
