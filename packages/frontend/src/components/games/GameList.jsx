@@ -64,36 +64,30 @@ function GameList() {
   }, []);
 
   if (loading) {
-    return <p>Loading games...</p>;
+    return <p className="library-empty">Loading games...</p>;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <p className="library-empty">{error}</p>;
   }
 
   return (
-    <div>
-      <h2>My Games</h2>
-
-      {message && <p>{message}</p>}
+    <>
+      {message && <p className="library-empty">{message}</p>}
 
       {games.length === 0 ? (
-        <p>No games yet.</p>
+        <p className="library-empty">No games yet</p>
       ) : (
-        <>
-          <p>{games.length} games found</p>
-
-          {games.map((game) => (
-            <GameCard
-              key={game.library_item_id}
-              game={game}
-              onRemove={handleRemoveGame}
-              isRemoving={removingId === game.library_item_id}
-            />
-          ))}
-        </>
+        games.map((game) => (
+          <GameCard
+            key={game.library_item_id}
+            game={game}
+            onRemove={handleRemoveGame}
+            isRemoving={removingId === game.library_item_id}
+          />
+        ))
       )}
-    </div>
+    </>
   );
 }
 

@@ -1,16 +1,27 @@
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Boardgames from "./pages/Boardgames";
 import "./App.css";
 import Communities from "./pages/Communities";
 import Friends from "./pages/Friends";
+import Landing from "./pages/Landing";
+import PageLayout from "./components/layout/PageLayout";
 
 function App() {
   return (
-    <>
-      <h1>Board Buddies</h1>
-      <Boardgames />
-      <Communities />
-      <Friends />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+
+        {/* Pages below require a logged-in user */}
+        <Route element={<PageLayout />}>
+          <Route path="/collection" element={<Boardgames />} />
+          <Route path="/friends" element={<Friends />} />
+          <Route path="/communities" element={<Communities />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
