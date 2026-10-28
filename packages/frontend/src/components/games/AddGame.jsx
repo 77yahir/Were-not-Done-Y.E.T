@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { addGame } from "../../services/games";
 import Modal from "../ui/Modal";
+import GameDetailsFields from "./GameDetailsFields";
+import {
+  EMPTY_GAME_DETAILS,
+  validateGameDetails
+} from "./gameDetails";
 import plusIcon from "../../assets/icons/plus.svg";
-
-const MAX_TITLE_LENGTH = 100;
-const MAX_GENRE_LENGTH = 50;
-const MAX_DESCRIPTION_LENGTH = 300;
 
 const CONDITIONS = [
   { value: "new", label: "New" },
@@ -16,42 +17,17 @@ const CONDITIONS = [
 ];
 
 const EMPTY_FORM = {
-  title: "",
-  minPlayers: "",
-  maxPlayers: "",
-  genre: "",
-  description: "",
+  ...EMPTY_GAME_DETAILS,
   condition: "good"
 };
 
 function validateGame(form) {
-  const title = form.title.trim();
-  const genre = form.genre.trim();
-  const description = form.description.trim();
-  const minPlayers = Number(form.minPlayers);
-  const maxPlayers = Number(form.maxPlayers);
-  const condition = form.condition;
-
-  if (!title) return { error: "Title is required." };
-  if (title.length > MAX_TITLE_LENGTH) {
-    return {
-      error: `Title must be ${MAX_TITLE_LENGTH} characters or fewer.`
-    };
-  }
-  if (!Number.isInteger(minPlayers) || minPlayers < 1) {
-    return { error: "Min players must be a whole number of at least 1." };
-  }
-  if (!Number.isInteger(maxPlayers) || maxPlayers < minPlayers) {
-    return {
-      error: "Max players must be a whole number no less than min players."
-    };
-  }
-  if (!genre) return { error: "Genre is required." };
-  if (!description) return { error: "Description is required." };
-  if (!condition) return { error: "Condition is required." };
+  const { details, error } = validateGameDetails(form);
+  if (error) return { error };
+  if (!form.condition) return { error: "Condition is required." };
 
   return {
-    game: { title, minPlayers, maxPlayers, genre, description, condition }
+    game: { ...details, condition: form.condition }
   };
 }
 
@@ -119,57 +95,7 @@ function AddGame({ onGameAdded }) {
           <form
             className="modal-form modal-form--compact"
             onSubmit={handleSubmit}>
-            <input
-              name="title"
-              type="text"
-              value={form.title}
-              onChange={handleChange}
-              placeholder="Title"
-              aria-label="Title"
-              maxLength={MAX_TITLE_LENGTH}
-              required
-              autoFocus
-            />
-            <input
-              name="minPlayers"
-              type="number"
-              min="1"
-              value={form.minPlayers}
-              onChange={handleChange}
-              placeholder="Min players"
-              aria-label="Min players"
-              required
-            />
-            <input
-              name="maxPlayers"
-              type="number"
-              min={form.minPlayers || 1}
-              value={form.maxPlayers}
-              onChange={handleChange}
-              placeholder="Max players"
-              aria-label="Max players"
-              required
-            />
-            <input
-              name="genre"
-              type="text"
-              value={form.genre}
-              onChange={handleChange}
-              placeholder="Genre"
-              aria-label="Genre"
-              maxLength={MAX_GENRE_LENGTH}
-              required
-            />
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Description"
-              aria-label="Description"
-              maxLength={MAX_DESCRIPTION_LENGTH}
-              rows={3}
-              required
-            />
+            <GameDetailsFields form={form} onChange={handleChange} />
             <select
               name="condition"
               value={form.condition}

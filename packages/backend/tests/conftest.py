@@ -97,6 +97,24 @@ def test_users(test_config):
                     .eq("board_game_id", item["board_game_id"]) \
                     .execute()
 
+        # Remove wishlist games added by test users
+        for user_id in users:
+            items = admin.table("wishlist_items") \
+                .select("board_game_id") \
+                .eq("user_id", user_id) \
+                .execute().data
+
+            admin.table("wishlist_items") \
+                .delete() \
+                .eq("user_id", user_id) \
+                .execute()
+
+            for item in items:
+                admin.table("board_games") \
+                    .delete() \
+                    .eq("board_game_id", item["board_game_id"]) \
+                    .execute()
+
         # Remove public profiles
         for user_id in reversed(users):
             admin.table("users") \

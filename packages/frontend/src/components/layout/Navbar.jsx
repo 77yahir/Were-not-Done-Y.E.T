@@ -4,11 +4,13 @@ import { logOut } from "../../services/auth";
 import avatarIcon from "../../assets/icons/avatar.svg";
 import bookIcon from "../../assets/icons/book.svg";
 import chevronIcon from "../../assets/icons/chevron-down.svg";
+import heartIcon from "../../assets/icons/heart.svg";
 import userIcon from "../../assets/icons/user.svg";
 import usersIcon from "../../assets/icons/users.svg";
 
 const NAV_LINKS = [
   { to: "/collection", label: "Library", icon: bookIcon },
+  { to: "/wishlist", label: "Wishlist", icon: heartIcon },
   { to: "/friends", label: "Friends", icon: userIcon },
   { to: "/communities", label: "Communities", icon: usersIcon }
 ];

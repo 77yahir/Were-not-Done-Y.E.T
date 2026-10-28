@@ -5,12 +5,14 @@ from app.routers.communities import router as community_router
 from app.routers.friends import router as friend_router
 from app.routers.users import router as user_router
 from app.routers.games import router as game_router
+from app.routers.wishlist import router as wishlist_router
 
 app = FastAPI(title="Board Buddies API")
 app.include_router(community_router)
 app.include_router(friend_router)
 app.include_router(user_router)
 app.include_router(game_router)
+app.include_router(wishlist_router)
 
 
 @app.get("/api/health")
