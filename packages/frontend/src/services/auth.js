@@ -20,9 +20,24 @@ export async function signUp(username, email, password) {
 }
 
 export async function logIn(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
+  const response = await fetch("/api/users/signin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const body = await response.json();
+
+  if (!response.ok) {
+    throw new Error(body.detail);
+  }
+
+  // Store the backend's tokens client-side so apiFetch can attach them
+  const { data, error } = await supabase.auth.setSession({
+    access_token: body.access_token,
+    refresh_token: body.refresh_token
   });
 
   if (error) {
