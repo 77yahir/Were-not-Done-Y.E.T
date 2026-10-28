@@ -4,6 +4,7 @@ import "./App.css";
 import Communities from "./pages/Communities";
 import Friends from "./pages/Friends";
 import Landing from "./pages/Landing";
+import Wishlist from "./pages/Wishlist";
 import PageLayout from "./components/layout/PageLayout";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         {/* Pages below require a logged-in user */}
         <Route element={<PageLayout />}>
           <Route path="/collection" element={<Boardgames />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/communities" element={<Communities />} />
         </Route>
