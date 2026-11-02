@@ -8,7 +8,7 @@ import Landing from "./pages/Landing";
 import Wishlist from "./pages/Wishlist";
 import PageLayout from "./components/layout/PageLayout";
 
-import { Routes, Route } from "react-router-dom";
+// import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 function App() {
