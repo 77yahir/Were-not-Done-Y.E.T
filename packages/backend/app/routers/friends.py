@@ -38,9 +38,9 @@ def add_friend(
     
     return {"friendship_id": friendship_id}
     
-@router.delete("/requests/{friendship_id}")
+@router.delete("/friendships/{friendship_id}")
 def delete_friend(
-    friendship_id= UUID,
+    friendship_id: UUID,
     user= Depends(get_current_user),
     credentials: HTTPAuthorizationCredentials = Depends(bearer)
 ):
