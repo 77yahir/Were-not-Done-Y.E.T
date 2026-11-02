@@ -1,9 +1,10 @@
 import { useState } from "react";
 import AddGame from "../components/games/AddGame";
 import GameList from "../components/games/GameList";
+import BorrowedList from "../components/library/BorrowedList";
 
 // Columns from the Figma "Library" page that aren't built yet
-const UPCOMING_COLUMNS = ["Borrowing", "Lent Out", "Requested"];
+const UPCOMING_COLUMNS = ["Lent Out", "Requested"];
 
 function Boardgames() {
   // Remount the list after a game is added so it reloads
@@ -16,6 +17,11 @@ function Boardgames() {
 
         <AddGame onGameAdded={() => setListKey((key) => key + 1)} />
         <GameList key={listKey} />
+
+      </section>
+      <section className="library-column">
+        <h2>Borrowing</h2>
+        <BorrowedList />
       </section>
 
       {UPCOMING_COLUMNS.map((title) => (
