@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 
-function CommunityCard({ community }) {
+export function CommunityCard({ community }) {
   return (
-    <Link to={`/communities/${community.group_id}`}>
-      {community.name}
-    </Link>
+    <div>
+      <Link to={`/communities/${community.group_id}`}>
+        <h3>{community.name}</h3>
+      </Link>
+
+      <p>{community.description}</p>
+      <p>Role: {community.role}</p>
+    </div>
   );
 }
-
-export default CommunityCard;
