@@ -40,3 +40,27 @@ def mark_as_read(notification_id: str, access_token: str):
         raise ValueError("Notification not found")
 
     return result.data[0]
+
+def create_notification(
+        recepient_id: str,
+        type: str,
+        message: str,
+        sender_id: str | None = None,
+        related_offer_id: str | None = None,
+        related_borrowing_id: str | None = None
+):
+    admin = get_supabase_client()
+    result = (
+        admin.table("notifications")
+        .insert({
+            "user_id": recepient_id,
+            "type": type,
+            "message": message,
+            "sender_id": sender_id,
+            "related_offer_id": related_offer_id,
+            "related_borrowing_id": related_borrowing_id
+        })
+        .execute()
+    )
+
+    return result.data[0]

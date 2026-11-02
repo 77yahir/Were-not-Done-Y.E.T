@@ -3,7 +3,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from uuid import UUID
 
 from app.core.auth import get_current_user
-from app.services.notifications import get_notifications, mark_as_read
+from app.services.notifications import get_notifications, mark_as_read, create_notification
+from app.schemas.notifications import NotificationCreate
 
 router = APIRouter(prefix="/api/notifications", tags=["Notifications"])
 
@@ -29,3 +30,16 @@ def read_notifications(
             status_code = 404, 
             detail="Notification not found"
         )
+
+# TESTING PURPOSES ONLY(causes vulnerabilties)
+@router.post("/")
+def add_notification(
+    data: NotificationCreate,
+    user=Depends(get_current_user)
+):
+    return create_notification(
+        recepient_id=str(data.recipient_id),
+        type=data.type,
+        message=data.message,
+        sender_id=str(user.id)
+    )
