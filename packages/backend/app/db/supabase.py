@@ -29,5 +29,3 @@ def get_user_supabase_client(access_token: str) -> Client:
     client.postgrest.auth(access_token)
     
     return client
-
-    

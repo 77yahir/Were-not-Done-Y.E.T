@@ -26,7 +26,10 @@ export async function apiFetch(path, options = {}) {
   });
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    const error = new Error(`API request failed: ${response.status}`);
+    // Lets callers react to specific failures, e.g. 409 for a duplicate
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();
