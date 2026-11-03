@@ -7,8 +7,8 @@ function Wishlist() {
   const [listKey, setListKey] = useState(0);
 
   return (
-    <section className="wishlist">
-      <h2>My Wishlist</h2>
+    <section className="tailwind-page mx-auto mt-[7px] flex max-w-[480px] flex-col gap-[7px] bg-bb-cream px-6 py-4">
+      <h2 className="text-center text-[20px]">My Wishlist</h2>
 
       <AddWishlistGame onGameAdded={() => setListKey((key) => key + 1)} />
       <WishlistList key={listKey} />

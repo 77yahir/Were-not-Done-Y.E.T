@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { addToWishlist } from "../../services/wishlist";
 import Modal from "../ui/Modal";
+import AddGameButton from "../games/AddGameButton";
 import GameDetailsFields from "../games/GameDetailsFields";
+import GameForm from "../games/GameForm";
+import ListMessage from "../games/ListMessage";
 import {
   EMPTY_GAME_DETAILS,
   validateGameDetails
 } from "../games/gameDetails";
-import plusIcon from "../../assets/icons/plus.svg";
 
 function AddWishlistGame({ onGameAdded }) {
   const [form, setForm] = useState(EMPTY_GAME_DETAILS);
@@ -63,25 +65,19 @@ function AddWishlistGame({ onGameAdded }) {
 
   return (
     <>
-      <button type="button" className="add-game-button" onClick={openForm}>
-        <img src={plusIcon} alt="" width="22" height="22" />
-        Add Game
-      </button>
+      <AddGameButton onClick={openForm} />
 
-      {message && <p className="library-empty">{message}</p>}
+      {message && <ListMessage>{message}</ListMessage>}
 
       {showForm && (
         <Modal title="Wishlist" onClose={closeForm}>
-          {formError && <p className="form-message">{formError}</p>}
-
-          <form
-            className="modal-form modal-form--compact"
+          <GameForm
+            error={formError}
+            loading={loading}
+            submitLabel="Add to Wishlist"
             onSubmit={handleSubmit}>
             <GameDetailsFields form={form} onChange={handleChange} />
-            <button type="submit" className="modal-submit" disabled={loading}>
-              {loading ? "Adding..." : "Add to Wishlist"}
-            </button>
-          </form>
+          </GameForm>
         </Modal>
       )}
     </>

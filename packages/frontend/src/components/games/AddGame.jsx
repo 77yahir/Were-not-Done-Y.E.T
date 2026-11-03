@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { addGame } from "../../services/games";
 import Modal from "../ui/Modal";
+import AddGameButton from "./AddGameButton";
 import GameDetailsFields from "./GameDetailsFields";
+import GameForm from "./GameForm";
+import ListMessage from "./ListMessage";
 import {
   EMPTY_GAME_DETAILS,
+  GAME_FIELD_CLASS,
   validateGameDetails
 } from "./gameDetails";
-import plusIcon from "../../assets/icons/plus.svg";
 
 const CONDITIONS = [
   { value: "new", label: "New" },
@@ -81,19 +84,16 @@ function AddGame({ onGameAdded }) {
 
   return (
     <>
-      <button type="button" className="add-game-button" onClick={openForm}>
-        <img src={plusIcon} alt="" width="22" height="22" />
-        Add Game
-      </button>
+      <AddGameButton onClick={openForm} />
 
-      {message && <p className="library-empty">{message}</p>}
+      {message && <ListMessage>{message}</ListMessage>}
 
       {showForm && (
         <Modal title="Add Game" onClose={closeForm}>
-          {formError && <p className="form-message">{formError}</p>}
-
-          <form
-            className="modal-form modal-form--compact"
+          <GameForm
+            error={formError}
+            loading={loading}
+            submitLabel="Submit"
             onSubmit={handleSubmit}>
             <GameDetailsFields form={form} onChange={handleChange} />
             <select
@@ -101,6 +101,7 @@ function AddGame({ onGameAdded }) {
               value={form.condition}
               onChange={handleChange}
               aria-label="Condition"
+              className={GAME_FIELD_CLASS}
               required>
               {CONDITIONS.map((condition) => (
                 <option key={condition.value} value={condition.value}>
@@ -108,10 +109,7 @@ function AddGame({ onGameAdded }) {
                 </option>
               ))}
             </select>
-            <button type="submit" className="modal-submit" disabled={loading}>
-              {loading ? "Adding..." : "Submit"}
-            </button>
-          </form>
+          </GameForm>
         </Modal>
       )}
     </>

@@ -1,4 +1,5 @@
 import {
+  GAME_FIELD_CLASS,
   MAX_DESCRIPTION_LENGTH,
   MAX_GENRE_LENGTH,
   MAX_TITLE_LENGTH
@@ -16,6 +17,7 @@ function GameDetailsFields({ form, onChange }) {
         placeholder="Title"
         aria-label="Title"
         maxLength={MAX_TITLE_LENGTH}
+        className={GAME_FIELD_CLASS}
         required
         autoFocus
       />
@@ -27,6 +29,7 @@ function GameDetailsFields({ form, onChange }) {
         onChange={onChange}
         placeholder="Min players"
         aria-label="Min players"
+        className={GAME_FIELD_CLASS}
         required
       />
       <input
@@ -37,6 +40,7 @@ function GameDetailsFields({ form, onChange }) {
         onChange={onChange}
         placeholder="Max players"
         aria-label="Max players"
+        className={GAME_FIELD_CLASS}
         required
       />
       <input
@@ -47,6 +51,7 @@ function GameDetailsFields({ form, onChange }) {
         placeholder="Genre"
         aria-label="Genre"
         maxLength={MAX_GENRE_LENGTH}
+        className={GAME_FIELD_CLASS}
         required
       />
       <textarea
@@ -57,6 +62,7 @@ function GameDetailsFields({ form, onChange }) {
         aria-label="Description"
         maxLength={MAX_DESCRIPTION_LENGTH}
         rows={3}
+        className={`${GAME_FIELD_CLASS} resize-y pt-1`}
         required
       />
     </>
