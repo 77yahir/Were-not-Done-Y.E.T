@@ -356,3 +356,45 @@
   font-size: 20px;
   text-align: center;
 }
+
+.notification-bell {
+  position: relative;
+  margin-left: auto;
+}
+
+.notification-bell + .nav-user {
+  margin-left: 0;
+}
+
+.notification-bell-button { position: relative; width: 45px; justify-content: center; }
+
+.notification-badge {
+  position: absolute; top: -4px; right: -4px;
+  min-width: 16px; padding: 0 4px; border-radius: 8px;
+  background: var(--bb-brown-dark); color: var(--bb-text); font-size: 11px;
+}
+
+.notification-menu { width: 280px; max-height: 320px; overflow-y: auto; }
+
+.notification-menu ul { list-style: none; margin: 0; padding: 0; }
+
+.notification-menu li button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  padding: 6px 8px;
+}
+.notification-menu .read,
+.notification-menu .unread {
+  background: var(--bb-brown);
+}
+
+.notification-menu .unread::before {
+  content: "! ";
+  font-weight: bold;
+  color: red;
+}
+
+.notification-menu .read {
+  opacity: 0.6;
+}

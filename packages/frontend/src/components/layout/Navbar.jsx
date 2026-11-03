@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { logOut } from "../../services/auth";
+import NotificationBell from "./NotificationBell"
 import avatarIcon from "../../assets/icons/avatar.svg";
 import bookIcon from "../../assets/icons/book.svg";
 import chevronIcon from "../../assets/icons/chevron-down.svg";
@@ -43,6 +44,7 @@ function Navbar({ user }) {
         </NavLink>
       ))}
 
+      <NotificationBell />
       <div className="nav-user">
         <button
           type="button"

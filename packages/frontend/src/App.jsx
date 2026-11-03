@@ -7,11 +7,11 @@ import {
 import Boardgames from "./pages/Boardgames";
 import Communities from "./pages/Communities";
 import CommunityDetails from "./pages/CommunityDetails";
-// import Dashboard from "./pages/Dashboard";
 import Friends from "./pages/Friends";
 import Landing from "./pages/Landing";
 import Wishlist from "./pages/Wishlist";
 import PageLayout from "./components/layout/PageLayout";
+
 import "./App.css";
 
 function App() {
