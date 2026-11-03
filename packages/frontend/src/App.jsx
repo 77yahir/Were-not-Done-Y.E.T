@@ -9,6 +9,7 @@ import Communities from "./pages/Communities";
 import CommunityDetails from "./pages/CommunityDetails";
 import Friends from "./pages/Friends";
 import Landing from "./pages/Landing";
+import Messages from "./pages/Messages";
 import Wishlist from "./pages/Wishlist";
 import PageLayout from "./components/layout/PageLayout";
 
@@ -32,6 +33,11 @@ function App() {
           <Route
             path="/communities/:groupId"
             element={<CommunityDetails />}
+          />
+
+          <Route
+            path="/messages/:userId?"
+            element={<Messages />}
           />
         </Route>
 

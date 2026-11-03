@@ -3,6 +3,7 @@ import {
   getWishlist,
   removeFromWishlist
 } from "../../services/wishlist.js";
+import ListMessage from "../games/ListMessage.jsx";
 import WishlistCard from "./WishlistCard.jsx";
 
 function WishlistList() {
@@ -64,19 +65,19 @@ function WishlistList() {
   }, []);
 
   if (loading) {
-    return <p className="library-empty">Loading wishlist...</p>;
+    return <ListMessage>Loading wishlist...</ListMessage>;
   }
 
   if (error) {
-    return <p className="library-empty">{error}</p>;
+    return <ListMessage>{error}</ListMessage>;
   }
 
   return (
     <>
-      {message && <p className="library-empty">{message}</p>}
+      {message && <ListMessage>{message}</ListMessage>}
 
       {games.length === 0 ? (
-        <p className="library-empty">No games on your wishlist yet</p>
+        <ListMessage>No games on your wishlist yet</ListMessage>
       ) : (
         games.map((game) => (
           <WishlistCard

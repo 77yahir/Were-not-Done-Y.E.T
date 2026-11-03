@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { getSession } from "../../services/auth";
 import {
   getCommunityMembers,
   removeCommunityMember
 } from "../../services/communities";
+import MessageLink from "../messages/MessageLink";
 
 export function MemberList({ groupId, permissions }) {
   const [members, setMembers] = useState([]);
@@ -10,9 +12,16 @@ export function MemberList({ groupId, permissions }) {
   const [error, setError] = useState("");
   const [removingId, setRemovingId] = useState(null);
   const [removeError, setRemoveError] = useState("");
+  const [myUserId, setMyUserId] = useState(null);
 
   const processingRef = useRef(false);
   const generationRef = useRef(0);
+
+  useEffect(() => {
+    getSession().then((session) => {
+      setMyUserId(session?.user.id ?? null);
+    });
+  }, []);
 
   async function handleRemove(member) {
     if (processingRef.current) {
@@ -143,6 +152,10 @@ export function MemberList({ groupId, permissions }) {
           <div key={member.user_id}>
             <p>{member.username}</p>
             <p>Role: {member.role}</p>
+
+            {myUserId && member.user_id !== myUserId && (
+              <MessageLink userId={member.user_id} />
+            )}
 
             {canRemoveMember(member) && (
               <button

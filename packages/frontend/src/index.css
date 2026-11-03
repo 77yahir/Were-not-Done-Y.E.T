@@ -1,3 +1,11 @@
+/* Tailwind's theme and utilities, used by the Library, Wishlist and Messages
+   pages. Friends, Communities and the rest of the app use App.css instead.
+   Tailwind's reset (Preflight) is left out on purpose: those pages rely on the
+   browser's default heading sizes and margins */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
 /* Board Buddies colors and font, taken from the Figma design */
 :root {
   --bb-tan: #c19a6b;
@@ -18,63 +26,78 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
+/* The same colors as Tailwind utilities, e.g. bg-bb-brown */
+@theme inline {
+  --color-bb-tan: var(--bb-tan);
+  --color-bb-cream: var(--bb-cream);
+  --color-bb-brown: var(--bb-brown);
+  --color-bb-brown-dark: var(--bb-brown-dark);
+  --color-bb-tan-overlay: var(--bb-tan-overlay);
+  --color-bb-text: var(--bb-text);
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--bb-tan);
-}
+/* Global element styles. They sit in a layer because rules outside a layer
+   always beat Tailwind utilities, which would make classes like bg-bb-cream
+   do nothing on a button */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
 
-h1,
-h2,
-h3 {
-  font-weight: 400;
-  margin: 0;
-}
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bb-tan);
+  }
 
-/* Brown bars are the buttons and inputs throughout the design */
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-  font-size: inherit;
-  color: var(--bb-text);
-}
+  h1,
+  h2,
+  h3 {
+    font-weight: 400;
+    margin: 0;
+  }
 
-button {
-  background: var(--bb-brown);
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-}
+  /* Brown bars are the buttons and inputs throughout the design */
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--bb-text);
+  }
 
-button:hover:not(:disabled) {
-  background: var(--bb-brown-dark);
-}
+  button {
+    background: var(--bb-brown);
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
+  button:hover:not(:disabled) {
+    background: var(--bb-brown-dark);
+  }
 
-input,
-select,
-textarea {
-  background: var(--bb-brown);
-  border: none;
-  padding: 6px 12px;
-}
+  button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
 
-input::placeholder,
-textarea::placeholder {
-  color: rgba(0, 0, 0, 0.7);
-}
+  input,
+  select,
+  textarea {
+    background: var(--bb-brown);
+    border: none;
+    padding: 6px 12px;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--bb-text);
-  outline-offset: 2px;
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--bb-text);
+    outline-offset: 2px;
+  }
 }

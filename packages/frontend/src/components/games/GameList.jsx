@@ -4,6 +4,7 @@ import {
   removeGame
 } from "../../services/games.js";
 import GameCard from "./GameCard.jsx";
+import ListMessage from "./ListMessage.jsx";
 
 function GameList() {
   const [games, setGames] = useState([]);
@@ -64,19 +65,19 @@ function GameList() {
   }, []);
 
   if (loading) {
-    return <p className="library-empty">Loading games...</p>;
+    return <ListMessage>Loading games...</ListMessage>;
   }
 
   if (error) {
-    return <p className="library-empty">{error}</p>;
+    return <ListMessage>{error}</ListMessage>;
   }
 
   return (
     <>
-      {message && <p className="library-empty">{message}</p>}
+      {message && <ListMessage>{message}</ListMessage>}
 
       {games.length === 0 ? (
-        <p className="library-empty">No games yet</p>
+        <ListMessage>No games yet</ListMessage>
       ) : (
         games.map((game) => (
           <GameCard

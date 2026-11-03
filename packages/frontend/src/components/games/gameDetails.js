@@ -4,6 +4,10 @@ export const MAX_TITLE_LENGTH = 100;
 export const MAX_GENRE_LENGTH = 50;
 export const MAX_DESCRIPTION_LENGTH = 300;
 
+// Tailwind classes for the inputs in these forms
+export const GAME_FIELD_CLASS =
+  "min-h-[43px] w-full px-[7px] py-0 text-[20px]";
+
 export const EMPTY_GAME_DETAILS = {
   title: "",
   minPlayers: "",

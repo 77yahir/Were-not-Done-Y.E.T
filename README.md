@@ -9,6 +9,7 @@ borrow games from each other
 ## Tech Stack
 
 - **Frontend:** React + Vite
+- **Styling:** Tailwind CSS (Library, Wishlist, Messages) and `App.css` (everything else, including Friends and Communities)
 - **Backend:** Python + FastAPI
 - **Database:** Supabase (PostgreSQL)
 - **Authentication:** Supabase Auth
@@ -21,6 +22,7 @@ packages/
 ├── frontend/
 │   └── src/
 │       ├── components/
+│       ├── hooks/
 │       ├── pages/
 │       ├── services/
 │       └── lib/
