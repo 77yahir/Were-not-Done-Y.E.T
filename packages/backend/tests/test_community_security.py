@@ -1026,3 +1026,72 @@ def test_nonmember_cannot_review_requests_permission(test_users):
     assert permissions["role"] is None
     assert permissions["status"] is None
     assert permissions["can_review_requests"] is False
+
+def test_creator_cannot_be_removed_with_incorrect_role(
+    test_users,
+    test_config
+):
+    owner, admin_user, _ = test_users
+
+    # Create community
+    group_id = owner.rpc(
+        "create_community",
+        {"p_name": "Creator Protection Test"}
+    ).execute().data
+
+    # Approve another user and appoint them admin
+    approve_member(owner, admin_user, group_id)
+
+    owner.rpc(
+        "appoint_community_admin",
+        {
+            "p_group_id": group_id,
+            "p_user_id": str(admin_user.auth.get_user().user.id),
+        }
+    ).execute()
+
+    # Use local service-role client to simulate
+    # an inconsistent creator membership role
+    from supabase import create_client
+
+    url, _, service_key = test_config
+    service_client = create_client(url, service_key)
+
+    owner_id = str(owner.auth.get_user().user.id)
+
+    service_client.table("group_memberships").update({
+        "role": "member"
+    }).eq(
+        "group_id", group_id
+    ).eq(
+        "user_id", owner_id
+    ).execute()
+
+    # Admin attempts to remove the creator
+    with pytest.raises(APIError) as exc_info:
+        admin_user.rpc(
+            "remove_community_member",
+            {
+                "p_group_id": group_id,
+                "p_user_id": owner_id,
+            }
+        ).execute()
+
+    assert (
+        exc_info.value.message
+        == "Member not found or removal not allowed"
+    )
+
+    # Confirm creator's membership remains approved
+    result = service_client.table(
+        "group_memberships"
+    ).select(
+        "status"
+    ).eq(
+        "group_id", group_id
+    ).eq(
+        "user_id", owner_id
+    ).single().execute()
+
+    assert result.data["status"] == "approved"
+

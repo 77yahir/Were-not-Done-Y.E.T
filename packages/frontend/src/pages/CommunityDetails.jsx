@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import { MemberList } from "../components/communities/MemberList";
 import { PendingRequests } from "../components/communities/PendingRequests";
 import { getMyCommunityPermissions } from "../services/communities";
 
@@ -57,11 +57,15 @@ function CommunityDetails() {
 
       {error && <p role="alert">{error}</p>}
 
-      {!loading &&
-        !error &&
-        permissions?.can_review_requests && (
-          <PendingRequests key={groupId} groupId={groupId} />
-        )}
+      {!loading && !error && permissions && (
+        <>
+          <MemberList key={groupId} groupId={groupId} permissions={permissions} />
+
+          {permissions.can_review_requests && (
+            <PendingRequests groupId={groupId} />
+          )}
+        </>
+      )}
     </div>
   );
 }

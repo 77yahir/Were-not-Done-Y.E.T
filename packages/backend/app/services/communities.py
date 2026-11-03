@@ -58,3 +58,51 @@ def get_my_community_permissions(
     ).execute()
 
     return response.data
+
+def remove_community_member(
+    group_id: str,
+    user_id: str,
+    access_token: str,
+):
+    client = get_user_supabase_client(access_token)
+    
+    response = client.rpc(
+        "remove_community_member",
+        {
+            "p_group_id": group_id,
+            "p_user_id": user_id
+        }
+    ).execute()
+    
+    return response.data
+
+def get_community_members(
+    group_id: str,
+    access_token: str
+):
+    client = get_user_supabase_client(access_token)
+    
+    response = client.rpc(
+        "get_community_members",
+        {
+            "p_group_id": group_id
+        }
+    ).execute()
+    
+    return response.data
+
+def get_my_communities(access_token: str):
+    client = get_user_supabase_client(access_token)
+
+    response = client.rpc(
+        "get_my_communities"
+    ).execute()
+
+    return response.data
+
+def get_all_communities(access_token: str):
+    client = get_user_supabase_client(access_token)
+    
+    response = client.rpc(
+        ""
+    )

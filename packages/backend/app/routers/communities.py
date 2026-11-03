@@ -4,11 +4,10 @@ from uuid import UUID
 
 from app.core.auth import get_current_user
 from app.schemas.communities import CommunityCreate, JoinRequestReview
-from app.services.communities import create_community, review_join_request, get_pending_join_requests, get_my_community_permissions
+from app.services.communities import create_community, review_join_request, get_pending_join_requests, get_my_community_permissions, remove_community_member, get_community_members, get_my_communities
 from postgrest.exceptions import APIError
 
 router = APIRouter(prefix="/api/communities", tags=["Communities"])
-
 bearer = HTTPBearer()
 
 @router.post("/")
@@ -116,7 +115,69 @@ def get_my_community_permissions_endpoint(
             ) from error
 
         raise
-
     
+@router.delete("/{group_id}/members/{user_id}")
+def remove_community_member_endpoint(
+    group_id: UUID,
+    user_id: UUID,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    try:
+        remove_community_member(
+            group_id=str(group_id),
+            user_id=str(user_id),
+            access_token=credentials.credentials
+        )
+
+        return {
+            "message": "Community member removed successfully"
+        }
+
+    except APIError as error:
+        if error.message == "Not authenticated":
+            raise HTTPException(
+                status_code=401,
+                detail="Not authenticated"
+            ) from error
+
+        if error.message == "Not authorized to remove members":
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized to remove members"
+            ) from error
+
+        if error.message == "Member not found or removal not allowed":
+            raise HTTPException(
+                status_code=404,
+                detail="Member not found or removal not allowed"
+            ) from error
+
+        raise
+    
+@router.get("/{group_id}/members")
+def get_community_members_endpoint(
+    group_id: UUID,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    members = get_community_members(
+        group_id=str(group_id),
+        access_token=credentials.credentials
+    )
+
+    return {"members": members}
+
+@router.get("/mine")
+def get_my_communities_endpoint(
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    communities = get_my_communities(
+        access_token=credentials.credentials
+    )
+
+    return {"communities": communities}
+
     
     
