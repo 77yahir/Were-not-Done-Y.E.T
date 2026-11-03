@@ -42,3 +42,21 @@ export async function getMyCommunityPermissions(groupId) {
     method: "GET"
   });
 }
+
+export async function removeCommunityMember(groupId, userId) {
+  return apiFetch(`/communities/${groupId}/members/${userId}`, {
+    method: "DELETE"
+  });
+}
+
+export async function getCommunityMembers(groupId) {
+  return apiFetch(`/communities/${groupId}/members`, {
+    method: "GET"
+  });
+}
+
+export async function getMyCommunities() {
+  return apiFetch("/communities/mine", {
+    method: "GET"
+  });
+}
