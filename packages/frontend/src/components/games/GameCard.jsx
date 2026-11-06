@@ -1,12 +1,13 @@
 import GameRow from "./GameRow";
+import { gameSummary } from "./gameDetails";
 
-function GameCard({ game, onRemove, isRemoving }) {
-  const details = `${game.min_players}–${game.max_players} players · ${game.genre}`;
-
+function GameCard({ game, onOpen, onRemove, isRemoving }) {
   return (
     <GameRow
       title={game.title}
-      tooltip={`${details}\n${game.description}`}
+      imageUrl={game.image_url}
+      summary={gameSummary(game)}
+      onOpen={() => onOpen(game)}
       onRemove={() => onRemove(game.library_item_id)}
       removeLabel={`Remove ${game.title}`}
       isRemoving={isRemoving}

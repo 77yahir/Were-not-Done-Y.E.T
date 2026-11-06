@@ -1,5 +1,6 @@
 import html
 import os
+import re
 import threading
 import time
 import xml.etree.ElementTree as ET
@@ -7,13 +8,16 @@ import xml.etree.ElementTree as ET
 import httpx
 
 # BoardGameGeek XML API2. BGG requires an approved application
-# token (boardgamegeek.com/applications), server-side requests,
-# and no more than one request every 2 seconds
+# token (boardgamegeek.com/applications). Requests stay on the
+# backend so the token never reaches the browser
 BGG_API_URL = "https://boardgamegeek.com/xmlapi2"
-SECONDS_BETWEEN_REQUESTS = 2
 REQUEST_TIMEOUT_SECONDS = 10
 
-# BGG asks apps to cache, and game details rarely change
+# Our own limit, not a published BGG number. It keeps us well
+# clear of BGG rejecting requests for coming in too fast
+SECONDS_BETWEEN_REQUESTS = 2
+
+# Game details rarely change, so don't ask BGG for them twice
 CACHE_SECONDS = 24 * 60 * 60
 MAX_CACHE_ENTRIES = 500
 
@@ -22,7 +26,10 @@ MAX_SEARCH_RESULTS = 10
 # Same limits as BoardGameCreate, so a picked game passes validation
 MAX_TITLE_LENGTH = 100
 MAX_GENRE_LENGTH = 50
-MAX_DESCRIPTION_LENGTH = 300
+MAX_DESCRIPTION_LENGTH = 1000
+MAX_IMAGE_URL_LENGTH = 500
+MAX_MIN_AGE = 99
+MAX_AVG_PLAYING_TIME = 100000
 
 class BoardGameSearchError(Exception):
     pass
@@ -38,7 +45,9 @@ def search_board_games(query: str):
         root = _get_xml("search", {"query": query, "type": "boardgame"})
         return _rank_matches(_parse_search(root), query)
 
-    return _cached(("search", query.casefold()), load)
+    games = _cached(("search", query.casefold()), load)
+
+    return _with_thumbnails(games)
 
 # Returns None when BGG has no game with this id
 def get_board_game(bgg_id: int):
@@ -49,24 +58,72 @@ def get_board_game(bgg_id: int):
 
     return _cached(("thing", bgg_id), load)
 
+# BGG's search results have no images, so they come from a second
+# request for the listed games. That also caches their details, which
+# makes picking one instant. If it fails, the names still show
+def _with_thumbnails(games):
+    try:
+        details = _get_board_games([game["bgg_id"] for game in games])
+    except BoardGameSearchError:
+        details = {}
+
+    return [
+        {
+            **game,
+            "thumbnail": (details.get(game["bgg_id"]) or {}).get("thumbnail")
+        }
+        for game in games
+    ]
+
+# Details for several games, with one request for any not yet cached
+def _get_board_games(bgg_ids):
+    games = {}
+    missing = []
+
+    for bgg_id in bgg_ids:
+        hit = _read_cache(("thing", bgg_id))
+
+        if hit:
+            games[bgg_id] = hit[1]
+        else:
+            missing.append(bgg_id)
+
+    if missing:
+        ids = ",".join(str(bgg_id) for bgg_id in missing)
+
+        for item in _get_xml("thing", {"id": ids}).findall("item"):
+            game = _parse_game(item)
+            _write_cache(("thing", game["bgg_id"]), game)
+            games[game["bgg_id"]] = game
+
+    return games
+
 def _cached(key, load):
-    now = time.monotonic()
+    hit = _read_cache(key)
 
-    with _cache_lock:
-        hit = _cache.get(key)
-
-    if hit and now - hit[0] < CACHE_SECONDS:
+    if hit:
         return hit[1]
 
     value = load()
+    _write_cache(key, value)
 
+    return value
+
+def _read_cache(key):
+    with _cache_lock:
+        hit = _cache.get(key)
+
+    if hit and time.monotonic() - hit[0] < CACHE_SECONDS:
+        return hit
+
+    return None
+
+def _write_cache(key, value):
     with _cache_lock:
         # Dicts keep insertion order, so this drops the oldest entry
         if len(_cache) >= MAX_CACHE_ENTRIES:
             _cache.pop(next(iter(_cache)))
-        _cache[key] = (now, value)
-
-    return value
+        _cache[key] = (time.monotonic(), value)
 
 def _get_xml(command: str, params: dict):
     global _last_request_at
@@ -161,8 +218,41 @@ def _parse_game(item):
         "max_players": max_players,
         "genre": categories[0][:MAX_GENRE_LENGTH] if categories else "",
         "description": _clean_description(item.findtext("description", "")),
-        "year": _to_int(_value(item, "yearpublished"))
+        "year": _to_int(_value(item, "yearpublished")),
+        "thumbnail": _web_url(item.findtext("thumbnail")),
+        "image_url": _web_url(item.findtext("image")),
+        "min_age": _in_range(_to_int(_value(item, "minage")), MAX_MIN_AGE),
+        "avg_playing_time": _average_playing_time(item)
     }
+
+# BGG has no average, and its playingtime is usually just the longest
+# time. So use the middle of its range: 60 to 120 minutes gives 90
+def _average_playing_time(item):
+    shortest = _to_int(_value(item, "minplaytime")) or 0
+    longest = _to_int(_value(item, "maxplaytime")) or 0
+
+    if 0 < shortest <= longest:
+        average = (shortest + longest) // 2
+    else:
+        average = _to_int(_value(item, "playingtime"))
+
+    return _in_range(average, MAX_AVG_PLAYING_TIME)
+
+# BGG uses 0 for unknown values. Return None for those, or anything
+# the form wouldn't accept, so the user can fill them in
+def _in_range(value, maximum):
+    if value is None or value < 1 or value > maximum:
+        return None
+
+    return value
+
+def _web_url(text):
+    url = (text or "").strip()
+
+    if len(url) > MAX_IMAGE_URL_LENGTH or not re.fullmatch(r"https?://\S+", url):
+        return None
+
+    return url
 
 # BGG uses 0 for unknown player counts. Return None instead so
 # the user fills them in

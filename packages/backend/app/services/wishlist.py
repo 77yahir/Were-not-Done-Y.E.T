@@ -11,6 +11,9 @@ def add_game_to_wishlist(
     max_players: int,
     genre: str,
     description: str,
+    image_url: str | None,
+    min_age: int | None,
+    avg_playing_time: int | None,
     access_token: str
 ):
 
@@ -24,7 +27,10 @@ def add_game_to_wishlist(
                 "p_min_players": min_players,
                 "p_max_players": max_players,
                 "p_genre": genre,
-                "p_description": description
+                "p_description": description,
+                "p_image_url": image_url,
+                "p_min_age": min_age,
+                "p_avg_playing_time": avg_playing_time
             }
         ).execute()
     except APIError as error:

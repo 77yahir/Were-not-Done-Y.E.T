@@ -3,6 +3,7 @@ import {
   getWishlist,
   removeFromWishlist
 } from "../../services/wishlist.js";
+import GameDetailsModal from "../games/GameDetailsModal.jsx";
 import ListMessage from "../games/ListMessage.jsx";
 import WishlistCard from "./WishlistCard.jsx";
 
@@ -12,6 +13,7 @@ function WishlistList() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [removingId, setRemovingId] = useState(null);
+  const [openGame, setOpenGame] = useState(null);
 
   async function handleRemoveGame(wishlistItemId) {
     setRemovingId(wishlistItemId);
@@ -83,10 +85,18 @@ function WishlistList() {
           <WishlistCard
             key={game.wishlist_item_id}
             game={game}
+            onOpen={setOpenGame}
             onRemove={handleRemoveGame}
             isRemoving={removingId === game.wishlist_item_id}
           />
         ))
+      )}
+
+      {openGame && (
+        <GameDetailsModal
+          game={openGame}
+          onClose={() => setOpenGame(null)}
+        />
       )}
     </>
   );

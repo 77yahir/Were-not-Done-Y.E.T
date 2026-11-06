@@ -23,6 +23,9 @@ def add_game(
             max_players= data.max_players,
             genre= data.genre,
             description= data.description,
+            image_url= data.image_url,
+            min_age= data.min_age,
+            avg_playing_time= data.avg_playing_time,
             access_token= credentials.credentials
         )
 

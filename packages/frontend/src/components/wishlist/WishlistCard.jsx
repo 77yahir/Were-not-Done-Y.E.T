@@ -1,12 +1,13 @@
 import GameRow from "../games/GameRow";
+import { gameSummary } from "../games/gameDetails";
 
-function WishlistCard({ game, onRemove, isRemoving }) {
-  const details = `${game.min_players}–${game.max_players} players · ${game.genre}`;
-
+function WishlistCard({ game, onOpen, onRemove, isRemoving }) {
   return (
     <GameRow
       title={game.title}
-      tooltip={`${details}\n${game.description}`}
+      imageUrl={game.image_url}
+      summary={gameSummary(game)}
+      onOpen={() => onOpen(game)}
       onRemove={() => onRemove(game.wishlist_item_id)}
       removeLabel={`Remove ${game.title} from wishlist`}
       isRemoving={isRemoving}
