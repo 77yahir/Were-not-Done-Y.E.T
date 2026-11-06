@@ -22,6 +22,10 @@ function AddWishlistGame({ onGameAdded }) {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
+  function handleAutofill(details) {
+    setForm((prev) => ({ ...prev, ...details }));
+  }
+
   function openForm() {
     setMessage("");
     setShowForm(true);
@@ -76,7 +80,11 @@ function AddWishlistGame({ onGameAdded }) {
             loading={loading}
             submitLabel="Add to Wishlist"
             onSubmit={handleSubmit}>
-            <GameDetailsFields form={form} onChange={handleChange} />
+            <GameDetailsFields
+              form={form}
+              onChange={handleChange}
+              onAutofill={handleAutofill}
+            />
           </GameForm>
         </Modal>
       )}

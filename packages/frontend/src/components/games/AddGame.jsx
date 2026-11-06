@@ -6,18 +6,11 @@ import GameDetailsFields from "./GameDetailsFields";
 import GameForm from "./GameForm";
 import ListMessage from "./ListMessage";
 import {
+  CONDITIONS,
   EMPTY_GAME_DETAILS,
   GAME_FIELD_CLASS,
   validateGameDetails
 } from "./gameDetails";
-
-const CONDITIONS = [
-  { value: "new", label: "New" },
-  { value: "like_new", label: "Like New" },
-  { value: "good", label: "Good" },
-  { value: "fair", label: "Fair" },
-  { value: "poor", label: "Poor" }
-];
 
 const EMPTY_FORM = {
   ...EMPTY_GAME_DETAILS,
@@ -44,6 +37,10 @@ function AddGame({ onGameAdded }) {
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleAutofill(details) {
+    setForm((prev) => ({ ...prev, ...details }));
   }
 
   function openForm() {
@@ -95,7 +92,11 @@ function AddGame({ onGameAdded }) {
             loading={loading}
             submitLabel="Submit"
             onSubmit={handleSubmit}>
-            <GameDetailsFields form={form} onChange={handleChange} />
+            <GameDetailsFields
+              form={form}
+              onChange={handleChange}
+              onAutofill={handleAutofill}
+            />
             <select
               name="condition"
               value={form.condition}

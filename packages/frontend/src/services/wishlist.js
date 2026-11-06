@@ -11,7 +11,10 @@ export async function addToWishlist(game) {
       min_players: game.minPlayers,
       max_players: game.maxPlayers,
       genre: game.genre,
-      description: game.description
+      description: game.description,
+      image_url: game.imageUrl,
+      min_age: game.minAge,
+      avg_playing_time: game.avgPlayingTime
     })
   });
 }

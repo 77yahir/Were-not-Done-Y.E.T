@@ -4,6 +4,7 @@ import {
   removeGame
 } from "../../services/games.js";
 import GameCard from "./GameCard.jsx";
+import GameDetailsModal from "./GameDetailsModal.jsx";
 import ListMessage from "./ListMessage.jsx";
 
 function GameList() {
@@ -12,6 +13,7 @@ function GameList() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [removingId, setRemovingId] = useState(null);
+  const [openGame, setOpenGame] = useState(null);
 
   async function handleRemoveGame(libraryItemId) {
     setRemovingId(libraryItemId);
@@ -83,10 +85,18 @@ function GameList() {
           <GameCard
             key={game.library_item_id}
             game={game}
+            onOpen={setOpenGame}
             onRemove={handleRemoveGame}
             isRemoving={removingId === game.library_item_id}
           />
         ))
+      )}
+
+      {openGame && (
+        <GameDetailsModal
+          game={openGame}
+          onClose={() => setOpenGame(null)}
+        />
       )}
     </>
   );
