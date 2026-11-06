@@ -60,3 +60,16 @@ export async function getMyCommunities() {
     method: "GET"
   });
 }
+
+export async function getDiscoverableCommunities() {
+  return apiFetch("/communities/discover", {
+    method: "GET"
+  });
+}
+
+export async function requestToJoinCommunity(groupId) {
+  return apiFetch(`/communities/${groupId}/requests`, {
+    method: "POST",
+    headers: {}
+  });
+}

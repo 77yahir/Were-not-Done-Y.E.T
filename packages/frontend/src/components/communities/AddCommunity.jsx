@@ -27,7 +27,7 @@ function AddCommunity() {
   return (
     <div>
       {message && <p>{message}</p>}
-      <h2>Add Community</h2>
+      <h2>Create A Community</h2>
 
       <form onSubmit={handleSubmit}>
         <input
