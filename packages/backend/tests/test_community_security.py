@@ -1094,4 +1094,62 @@ def test_creator_cannot_be_removed_with_incorrect_role(
     ).single().execute()
 
     assert result.data["status"] == "approved"
+    
+def test_discover_communities_as_nonmember(test_users):
+    owner, nonmember, _ = test_users
+
+    group_id = owner.rpc(
+        "create_community",
+        {
+            "p_name": "Discovery Test Community",
+            "p_description": "Testing community discovery"
+        }
+    ).execute().data
+
+    result = nonmember.rpc(
+        "get_discoverable_communities"
+    ).execute()
+
+    communities = result.data
+
+    discovered = next(
+        (
+            community
+            for community in communities
+            if community["group_id"] == group_id
+        ),
+        None
+    )
+
+    assert discovered is not None
+    assert discovered["name"] == "Discovery Test Community"
+    assert discovered["membership_status"] is None
+    assert discovered["membership_role"] is None
+    
+
+def test_discover_communities_as_owner(test_users):
+    owner, _, _ = test_users
+
+    group_id = owner.rpc(
+        "create_community",
+        {
+            "p_name": "Owner Discovery Test",
+            "p_description": "Testing owner discovery"
+        }
+    ).execute().data
+
+    result = owner.rpc(
+        "get_discoverable_communities"
+    ).execute()
+
+    discovered = next(
+        community
+        for community in result.data
+        if community["group_id"] == group_id
+    )
+
+    assert discovered["membership_status"] == "approved"
+    assert discovered["membership_role"] == "owner"
+
+
 

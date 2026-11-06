@@ -4,7 +4,7 @@ from uuid import UUID
 
 from app.core.auth import get_current_user
 from app.schemas.communities import CommunityCreate, JoinRequestReview
-from app.services.communities import create_community, review_join_request, get_pending_join_requests, get_my_community_permissions, remove_community_member, get_community_members, get_my_communities
+from app.services.communities import create_community, review_join_request, get_pending_join_requests, get_my_community_permissions, remove_community_member, get_community_members, get_my_communities, get_discoverable_communities, request_to_join_community
 from postgrest.exceptions import APIError
 
 router = APIRouter(prefix="/api/communities", tags=["Communities"])
@@ -178,6 +178,48 @@ def get_my_communities_endpoint(
     )
 
     return {"communities": communities}
+
+@router.get("/discover")
+def get_discoverable_communities_endpoint(
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    communities = get_discoverable_communities(
+        access_token=credentials.credentials
+    )
+    
+    return {"communities": communities}
+
+@router.post("/{group_id}/requests", status_code=201)
+def request_to_join_community_endpoint(
+    group_id: UUID,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    try:
+        request_to_join_community(
+            group_id=str(group_id),
+            access_token=credentials.credentials
+        )
+        
+        return {
+            "messsage": "Join request submitted successfully"
+        }
+    except APIError as error:
+        if error.message == "Membership already pending or approved":
+            raise HTTPException(
+                status_code=409,
+                detail="Membership already pending or approved"
+            ) from error
+            
+        if error.message == "Not authenticated":
+            raise HTTPException(
+                status_code=401,
+                detail="Not authenticated"
+            ) from error
+            
+        raise
+    
 
     
     
