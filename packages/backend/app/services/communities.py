@@ -100,9 +100,26 @@ def get_my_communities(access_token: str):
 
     return response.data
 
-def get_all_communities(access_token: str):
+def get_discoverable_communities(access_token: str):
     client = get_user_supabase_client(access_token)
     
     response = client.rpc(
-        ""
-    )
+        "get_discoverable_communities"
+    ).execute()
+    
+    return response.data
+
+def request_to_join_community(
+    group_id: str,
+    access_token: str
+):
+    client = get_user_supabase_client(access_token)
+    
+    response = client.rpc(
+        "request_to_join_community",
+        {
+            "p_group_id": group_id
+        }
+    ).execute()
+    
+    return response.data
