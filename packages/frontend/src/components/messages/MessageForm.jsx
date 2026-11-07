@@ -3,7 +3,14 @@ import { useState } from "react";
 // Keep in sync with MessageCreate in the backend
 const MAX_MESSAGE_LENGTH = 2000;
 
-function MessageForm({ onSend }) {
+const NOT_ALLOWED =
+  "You can only message friends or community members";
+
+// forbiddenMessage explains a refused message (a 403 from the backend)
+function MessageForm({
+  onSend,
+  forbiddenMessage = NOT_ALLOWED
+}) {
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -26,7 +33,7 @@ function MessageForm({ onSend }) {
       setDraft((current) => current || body);
       setError(
         err.status === 403
-          ? "You can only message friends or community members"
+          ? forbiddenMessage
           : "Failed to send message"
       );
       console.error(err);
