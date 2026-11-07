@@ -3,8 +3,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from supabase import AuthApiError
 from app.core.auth import get_current_user
 from app.schemas.users import SignUp, SignIn
-from app.services.users import create_user, sign_in_user, get_user_profile
+from app.services.users import create_user, sign_in_user, get_user_profile, get_user_library
 from uuid import UUID
+from postgrest.exceptions import APIError
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
 bearer = HTTPBearer()
@@ -42,3 +43,33 @@ def get_user_profile_endpoint(
         )
 
     return {"profile": profile}
+
+
+@router.get("/{user_id}/library")
+def get_user_library_endpoint(
+    user_id: UUID,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    try:
+        games = get_user_library(
+            user_id=str(user_id),
+            access_token=credentials.credentials
+        )
+
+        return {"games": games}
+
+    except APIError as error:
+        if error.message == "Not authorized to view library":
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized to view library"
+            ) from error
+
+        if error.message == "Not authenticated":
+            raise HTTPException(
+                status_code=401,
+                detail="Not authenticated"
+            ) from error
+
+        raise
