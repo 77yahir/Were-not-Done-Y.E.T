@@ -5,7 +5,7 @@ import {
 } from "../../services/friends.js";
 import FriendCard from "./FriendCard.jsx";
 
-function FriendList() {
+function FriendList({ refreshVersion = 0, onFriendChanged }) {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,6 +27,8 @@ function FriendList() {
       );
 
       setMessage("Friend removed successfully");
+
+      onFriendChanged?.();
     } catch (error) {
       setMessage("Failed to remove friend");
       console.error(error);
@@ -61,7 +63,7 @@ function FriendList() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [refreshVersion]);
 
   if (loading) {
     return <p>Loading friends...</p>;
@@ -88,7 +90,9 @@ function FriendList() {
               key={friendship.friendship_id}
               friendship={friendship}
               onRemove={handleRemoveFriend}
-              isRemoving={removingId === friendship.friendship_id}
+              isRemoving={
+                removingId === friendship.friendship_id
+              }
             />
           ))}
         </>

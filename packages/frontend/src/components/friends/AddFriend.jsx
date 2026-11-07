@@ -3,13 +3,15 @@ import {
   searchUsers,
   sendFriendRequest
 } from "../../services/friends";
+import { Link } from "react-router-dom";
 
-function AddFriend() {
+function AddFriend({ onFriendChanged }) {
   const [username, setUsername] = useState("");
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sendingTo, setSendingTo] = useState(false);
+  const [sendingTo, setSendingTo] = useState(null);
+  const [requestedIds, setRequestedIds] = useState([]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -39,7 +41,16 @@ function AddFriend() {
 
     try {
       await sendFriendRequest(userId);
+
+      setRequestedIds((current) =>
+        current.includes(userId)
+          ? current
+          : [...current, userId]
+      );
+
       setMessage("Friend request sent!");
+
+      onFriendChanged?.();
     } catch (error) {
       setMessage("Failed to send friend request");
       console.error(error);
@@ -66,14 +77,21 @@ function AddFriend() {
       </form>
       {users.map((user) => (
         <div key={user.user_id}>
-          <p>{user.username}</p>
+          <Link to={`/users/${user.user_id}`}>
+            {user.username}
+          </Link>
           <button
             type="button"
             onClick={() => handleAddFriend(user.user_id)}
-            disabled={sendingTo === user.user_id}>
+            disabled={
+              sendingTo !== null ||
+              requestedIds.includes(user.user_id)
+            }>
             {sendingTo === user.user_id
               ? "Adding..."
-              : "Add Friend"}
+              : requestedIds.includes(user.user_id)
+                ? "Request Sent"
+                : "Add Friend"}
           </button>
         </div>
       ))}
