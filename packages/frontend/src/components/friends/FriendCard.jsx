@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
 import MessageLink from "../messages/MessageLink";
 
 function FriendCard({ friendship, onRemove, isRemoving }) {
   return (
     <div>
-      <p>{friendship.username}</p>
+      <Link to={`/users/${friendship.friend_user_id}`}>
+        {friendship.username}
+      </Link>
 
       <MessageLink userId={friendship.friend_user_id} />
 

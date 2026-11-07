@@ -12,6 +12,7 @@ import Landing from "./pages/Landing";
 import Messages from "./pages/Messages";
 import Wishlist from "./pages/Wishlist";
 import PageLayout from "./components/layout/PageLayout";
+import UserProfile from "./pages/UserProfile";
 
 import "./App.css";
 
@@ -38,6 +39,11 @@ function App() {
           <Route
             path="/messages/:userId?"
             element={<Messages />}
+          />
+
+          <Route
+            path="/users/:userId"
+            element={<UserProfile />}
           />
         </Route>
 

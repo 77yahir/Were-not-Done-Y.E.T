@@ -3,8 +3,12 @@ import {
   getMyFriendRequests,
   respondToFriendRequest
 } from "../../services/friends";
+import { Link } from "react-router-dom";
 
-export function FriendRequests() {
+export function FriendRequests({
+  refreshVersion = 0,
+  onFriendChanged
+}) {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,6 +37,8 @@ export function FriendRequests() {
           (request) => request.friendship_id !== friendshipId
         )
       );
+
+      onFriendChanged?.();
     } catch {
       if (generation === generationRef.current) {
         setReviewError("Failed to review friend request");
@@ -77,7 +83,7 @@ export function FriendRequests() {
       ignore = true;
       generationRef.current += 1;
     };
-  }, []);
+  }, [refreshVersion]);
 
   const incoming = requests.filter(
     (request) => request.direction === "incoming"
@@ -105,7 +111,12 @@ export function FriendRequests() {
 
           {incoming.map((request) => (
             <div key={request.friendship_id}>
-              <p>From: {request.username}</p>
+              <p>
+                From:{" "}
+                <Link to={`/users/${request.other_user_id}`}>
+                  {request.username}
+                </Link>
+              </p>
 
               <button
                 type="button"
@@ -141,7 +152,12 @@ export function FriendRequests() {
 
           {outgoing.map((request) => (
             <div key={request.friendship_id}>
-              <p>To: {request.username}</p>
+              <p>
+                To:{" "}
+                <Link to={`/users/${request.other_user_id}`}>
+                  {request.username}
+                </Link>
+              </p>
               <p>Status: Pending</p>
             </div>
           ))}
