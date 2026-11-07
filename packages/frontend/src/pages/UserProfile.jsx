@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getUserProfile } from "../services/users";
+import UserLibrary from "../components/users/UserLibrary";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -70,6 +71,7 @@ export default function UserProfile() {
             {profile.username.charAt(0).toUpperCase()}
           </div>
 
+          <UserLibrary userId={userId} />
           <h2>{profile.username}</h2>
 
           <p>

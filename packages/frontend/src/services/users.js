@@ -5,3 +5,9 @@ export async function getUserProfile(userId) {
     method: "GET"
   });
 }
+
+export async function getUserLibrary(userId) {
+  return apiFetch(`/users/${userId}/library`, {
+    method: "GET"
+  });
+}
