@@ -5,6 +5,7 @@ import {
 } from "../../services/games.js";
 import GameCard from "./GameCard.jsx";
 import GameDetailsModal from "./GameDetailsModal.jsx";
+import GameRows from "./GameRows.jsx";
 import ListMessage from "./ListMessage.jsx";
 
 function GameList() {
@@ -81,15 +82,17 @@ function GameList() {
       {games.length === 0 ? (
         <ListMessage>No games yet</ListMessage>
       ) : (
-        games.map((game) => (
-          <GameCard
-            key={game.library_item_id}
-            game={game}
-            onOpen={setOpenGame}
-            onRemove={handleRemoveGame}
-            isRemoving={removingId === game.library_item_id}
-          />
-        ))
+        <GameRows>
+          {games.map((game) => (
+            <GameCard
+              key={game.library_item_id}
+              game={game}
+              onOpen={setOpenGame}
+              onRemove={handleRemoveGame}
+              isRemoving={removingId === game.library_item_id}
+            />
+          ))}
+        </GameRows>
       )}
 
       {openGame && (
