@@ -56,3 +56,17 @@ def get_user_profile(
         return None
 
     return response.data[0]
+
+
+def get_user_library(
+    user_id: str,
+    access_token: str
+):
+    client = get_user_supabase_client(access_token)
+
+    response = client.rpc(
+        "get_user_library",
+        {"p_user_id": user_id}
+    ).execute()
+
+    return response.data
