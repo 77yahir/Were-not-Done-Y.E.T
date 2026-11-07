@@ -1,5 +1,6 @@
 import AddFriend from "../components/friends/AddFriend";
 import FriendList from "../components/friends/FriendList";
+import { FriendRequests } from "../components/friends/FriendRequests";
 
 function Friends() {
   return (
@@ -8,6 +9,7 @@ function Friends() {
 
       <AddFriend />
       <FriendList />
+      <FriendRequests />
     </div>
   );
 }
