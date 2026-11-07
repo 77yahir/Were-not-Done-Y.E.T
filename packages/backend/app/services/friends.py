@@ -26,6 +26,32 @@ def send_friend_request(recipient_id: str, access_token: str):
 
     return response.data
 
+def get_my_friend_requests(access_token: str):
+    client = get_user_supabase_client(access_token)
+
+    response = client.rpc(
+        "get_my_friend_requests"
+    ).execute()
+
+    return response.data
+
+def respond_to_friend_request(
+    friendship_id: str,
+    decision: str,
+    access_token: str
+):
+    client = get_user_supabase_client(access_token)
+
+    response = client.rpc(
+        "respond_to_friend_request",
+        {
+            "p_friendship_id": friendship_id,
+            "p_response": decision
+        }
+    ).execute()
+
+    return response.data
+
 def remove_friend(friendship_id: str, access_token: str):
     
     client = get_user_supabase_client(access_token)
@@ -48,3 +74,5 @@ def get_friends(access_token: str):
     ).execute()
 
     return response.data
+
+

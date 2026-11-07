@@ -27,3 +27,24 @@ export async function removeFriend(friendshipId) {
 export async function getFriends() {
   return apiFetch("/friends/friendships");
 }
+
+export async function respondToFriendRequest(
+  friendshipId,
+  decision
+) {
+  return apiFetch(`/friends/requests/${friendshipId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      decision: decision
+    })
+  });
+}
+
+export async function getMyFriendRequests() {
+  return apiFetch("/friends/requests", {
+    method: "GET"
+  });
+}
