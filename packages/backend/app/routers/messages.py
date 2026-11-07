@@ -5,11 +5,14 @@ from uuid import UUID
 
 from app.core.auth import get_current_user
 from app.schemas.messages import MessageCreate
-from app.services.messages import get_conversations, get_unread_count, get_messages, send_message, mark_conversation_read
+from app.services.messages import get_conversations, get_unread_count, get_messages, send_message, mark_conversation_read, get_community_chats, get_community_messages, send_community_message
 
 router = APIRouter(prefix="/api/messages", tags=["Messages"])
 
 bearer = HTTPBearer()
+
+# Raised by the database for anyone who isn't an approved member
+NOT_A_COMMUNITY_MEMBER = "Only community members can use this chat"
 
 @router.get("/conversations")
 def list_conversations(
@@ -83,3 +86,62 @@ def read_conversation(
     )
 
     return {"message": "Conversation marked as read"}
+
+@router.get("/communities")
+def list_community_chats(
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    chats = get_community_chats(
+        access_token=credentials.credentials
+    )
+
+    return {"chats": chats}
+
+@router.get("/communities/{group_id}")
+def list_community_messages(
+    group_id: UUID,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    try:
+        messages = get_community_messages(
+            group_id=str(group_id),
+            access_token=credentials.credentials
+        )
+
+        return {"messages": messages}
+
+    except APIError as error:
+        if error.message == NOT_A_COMMUNITY_MEMBER:
+            raise HTTPException(
+                status_code=403,
+                detail=NOT_A_COMMUNITY_MEMBER
+            ) from error
+
+        raise
+
+@router.post("/communities/{group_id}")
+def add_community_message(
+    group_id: UUID,
+    data: MessageCreate,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    try:
+        message_id = send_community_message(
+            group_id=str(group_id),
+            body=data.body,
+            access_token=credentials.credentials
+        )
+
+        return {"message_id": message_id}
+
+    except APIError as error:
+        if error.message == NOT_A_COMMUNITY_MEMBER:
+            raise HTTPException(
+                status_code=403,
+                detail=NOT_A_COMMUNITY_MEMBER
+            ) from error
+
+        raise

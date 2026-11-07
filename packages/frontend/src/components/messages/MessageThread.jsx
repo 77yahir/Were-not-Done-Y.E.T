@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { usePolledData } from "../../hooks/usePolledData";
 import {
@@ -6,8 +6,8 @@ import {
   markConversationRead,
   sendMessage
 } from "../../services/messages";
-import MessageBubble from "./MessageBubble";
 import MessageForm from "./MessageForm";
+import MessageLog from "./MessageLog";
 
 // How often an open conversation checks for new messages
 const POLL_MS = 5000;
@@ -28,20 +28,9 @@ function MessageThread({ contact, onChange }) {
     POLL_MS
   );
 
-  const messages = data?.messages;
-  const messageCount = messages?.length;
-  const newestUnreadId = messages?.findLast(
+  const newestUnreadId = data?.messages?.findLast(
     (message) => !message.is_mine && !message.read_at
   )?.message_id;
-
-  const listRef = useRef(null);
-
-  // Keep the newest message in view
-  useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight;
-    }
-  }, [messageCount]);
 
   // An open conversation counts as read, including new arrivals
   useEffect(() => {
@@ -71,31 +60,11 @@ function MessageThread({ contact, onChange }) {
         <h2 className="truncate text-xl">{username}</h2>
       </div>
 
-      <div
-        ref={listRef}
-        role="log"
-        aria-live="polite"
-        className="flex flex-1 flex-col gap-2 overflow-y-auto bg-bb-tan-overlay p-3">
-        {!data && !error && (
-          <p className="m-0 text-center">Loading messages...</p>
-        )}
-
-        {!data && error && (
-          <p role="alert" className="m-0 text-center">
-            Failed to load messages
-          </p>
-        )}
-
-        {messageCount === 0 && (
-          <p className="m-0 text-center">
-            No messages yet. Say hello!
-          </p>
-        )}
-
-        {messages?.map((message) => (
-          <MessageBubble key={message.message_id} message={message} />
-        ))}
-      </div>
+      <MessageLog
+        data={data}
+        error={error}
+        emptyText="No messages yet. Say hello!"
+      />
 
       {canMessage ? (
         <MessageForm onSend={handleSend} />

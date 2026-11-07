@@ -1,22 +1,53 @@
 import { useParams } from "react-router-dom";
+import CommunityChatThread from "../components/messages/CommunityChatThread";
 import ConversationList from "../components/messages/ConversationList";
 import MessageThread from "../components/messages/MessageThread";
 import { usePolledData } from "../hooks/usePolledData";
-import { getConversations } from "../services/messages";
+import {
+  getCommunityChats,
+  getConversations
+} from "../services/messages";
 
-// How often the conversation list checks for changes
+// How often the lists check for changes, including someone joining
+// or leaving a community
 const POLL_MS = 10000;
 
+// What to show when nothing can be opened at this address
+function getPlaceholder(userId, groupId, chats, chatsFailed) {
+  if (groupId) {
+    if (chats) {
+      return "Only community members can use this chat";
+    }
+
+    return chatsFailed
+      ? "Failed to load community chats"
+      : "Loading chat...";
+  }
+
+  return userId
+    ? "You can only message friends or community members"
+    : "Choose someone to message";
+}
+
 function Messages() {
-  const { userId } = useParams();
+  const { userId, groupId } = useParams();
   const { data, error, reload } = usePolledData(
     getConversations,
     POLL_MS
   );
+  // Loaded on their own so direct messages still work if they fail
+  const chatList = usePolledData(getCommunityChats, POLL_MS);
 
   const conversations = data?.conversations ?? [];
+  const chats = chatList.data?.chats;
+  const chatsFailed = Boolean(chatList.error);
+  const isOpen = Boolean(userId || groupId);
+
   const selected = conversations.find(
     (conversation) => conversation.user_id === userId
+  );
+  const selectedChat = chats?.find(
+    (chat) => chat.group_id === groupId
   );
 
   return (
@@ -34,13 +65,23 @@ function Messages() {
           {/* Small screens show the list or a conversation, not both */}
           <div
             className={`md:h-[calc(100vh-12rem)] md:min-h-96 md:overflow-y-auto ${
-              userId ? "hidden md:block" : ""
+              isOpen ? "hidden md:block" : ""
             }`}>
-            <ConversationList conversations={conversations} />
+            <ConversationList
+              conversations={conversations}
+              chats={chats}
+              chatsFailed={chatsFailed}
+            />
           </div>
 
-          <div className={userId ? "" : "hidden md:block"}>
-            {selected ? (
+          <div className={isOpen ? "" : "hidden md:block"}>
+            {selectedChat ? (
+              <CommunityChatThread
+                key={selectedChat.group_id}
+                chat={selectedChat}
+                onChange={chatList.reload}
+              />
+            ) : selected ? (
               <MessageThread
                 key={selected.user_id}
                 contact={selected}
@@ -48,9 +89,12 @@ function Messages() {
               />
             ) : (
               <p className="m-0 text-center">
-                {userId
-                  ? "You can only message friends or community members"
-                  : "Choose someone to message"}
+                {getPlaceholder(
+                  userId,
+                  groupId,
+                  chats,
+                  chatsFailed
+                )}
               </p>
             )}
           </div>

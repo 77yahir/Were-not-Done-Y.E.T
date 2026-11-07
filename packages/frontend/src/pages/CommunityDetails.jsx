@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MemberList } from "../components/communities/MemberList";
 import { PendingRequests } from "../components/communities/PendingRequests";
+import CommunityChatLink from "../components/messages/CommunityChatLink";
 import { getMyCommunityPermissions } from "../services/communities";
 
 function CommunityDetails() {
@@ -59,6 +60,11 @@ function CommunityDetails() {
 
       {!loading && !error && permissions && (
         <>
+          {/* Approved members are in the community's group chat */}
+          {permissions.status === "approved" && (
+            <CommunityChatLink groupId={groupId} />
+          )}
+
           <MemberList key={groupId} groupId={groupId} permissions={permissions} />
 
           {permissions.can_review_requests && (

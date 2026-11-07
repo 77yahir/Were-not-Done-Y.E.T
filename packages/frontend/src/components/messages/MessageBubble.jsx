@@ -5,7 +5,8 @@ const TIME_FORMAT = {
   minute: "2-digit"
 };
 
-function MessageBubble({ message }) {
+// Group chats set showSender to name who wrote other people's messages
+function MessageBubble({ message, showSender }) {
   const sentAt = new Date(message.created_at);
 
   return (
@@ -15,6 +16,12 @@ function MessageBubble({ message }) {
           ? "self-end bg-bb-brown"
           : "self-start bg-bb-cream"
       }`}>
+      {showSender && !message.is_mine && (
+        <span className="mb-1 block text-xs wrap-anywhere">
+          {message.sender_username}
+        </span>
+      )}
+
       <p className="m-0 wrap-anywhere whitespace-pre-wrap">
         {message.body}
       </p>

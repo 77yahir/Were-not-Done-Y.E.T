@@ -37,3 +37,22 @@ export async function markConversationRead(userId) {
 export async function getUnreadMessageCount() {
   return apiFetch("/messages/unread-count");
 }
+
+// Group chats, one per community the user is an approved member of
+export async function getCommunityChats() {
+  return apiFetch("/messages/communities");
+}
+
+export async function getCommunityMessages(groupId) {
+  return apiFetch(`/messages/communities/${groupId}`);
+}
+
+export async function sendCommunityMessage(groupId, body) {
+  return apiFetch(`/messages/communities/${groupId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ body })
+  });
+}

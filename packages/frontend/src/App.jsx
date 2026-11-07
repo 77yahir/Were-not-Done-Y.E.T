@@ -42,6 +42,11 @@ function App() {
           />
 
           <Route
+            path="/messages/communities/:groupId"
+            element={<Messages />}
+          />
+
+          <Route
             path="/users/:userId"
             element={<UserProfile />}
           />

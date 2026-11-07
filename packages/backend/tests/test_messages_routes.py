@@ -12,6 +12,9 @@ from app.services import messages as messages_service
 OTHER_USER_ID = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 CONVERSATION_URL = f"/api/messages/conversations/{OTHER_USER_ID}"
 
+GROUP_ID = "6fa85f64-5717-4562-b3fc-2c963f66afa6"
+GROUP_CHAT_URL = f"/api/messages/communities/{GROUP_ID}"
+
 @pytest.fixture
 def client():
     app.dependency_overrides[get_current_user] = lambda: object()
@@ -26,6 +29,9 @@ def client():
         ("get", CONVERSATION_URL),
         ("post", CONVERSATION_URL),
         ("patch", f"{CONVERSATION_URL}/read"),
+        ("get", "/api/messages/communities"),
+        ("get", GROUP_CHAT_URL),
+        ("post", GROUP_CHAT_URL),
     ],
 )
 def test_endpoints_require_login(method, url):
@@ -164,3 +170,146 @@ def test_messages_come_back_oldest_first(monkeypatch):
     messages = messages_service.get_messages(OTHER_USER_ID, "test-token")
 
     assert [m["body"] for m in messages] == ["Oldest", "Newest"]
+
+def not_a_member_error():
+    return APIError({
+        "code": "P0001",
+        "message": "Only community members can use this chat"
+    })
+
+def test_lists_community_chats(client, monkeypatch):
+    monkeypatch.setattr(
+        messages_router,
+        "get_community_chats",
+        lambda access_token: [{"group_id": GROUP_ID}]
+    )
+
+    response = client.get("/api/messages/communities")
+
+    assert response.status_code == 200
+    assert response.json() == {"chats": [{"group_id": GROUP_ID}]}
+
+def test_reads_community_chat_with_the_callers_token(client, monkeypatch):
+    get_community_messages = MagicMock(return_value=[{"body": "Hi"}])
+    monkeypatch.setattr(
+        messages_router,
+        "get_community_messages",
+        get_community_messages
+    )
+
+    response = client.get(GROUP_CHAT_URL)
+
+    assert response.status_code == 200
+    assert response.json() == {"messages": [{"body": "Hi"}]}
+    get_community_messages.assert_called_once_with(
+        group_id=GROUP_ID,
+        access_token="test-token"
+    )
+
+def test_sends_trimmed_community_message(client, monkeypatch):
+    send_community_message = MagicMock(return_value="new-message-id")
+    monkeypatch.setattr(
+        messages_router,
+        "send_community_message",
+        send_community_message
+    )
+
+    response = client.post(GROUP_CHAT_URL, json={"body": "  Hello all!  "})
+
+    assert response.status_code == 200
+    assert response.json() == {"message_id": "new-message-id"}
+    send_community_message.assert_called_once_with(
+        group_id=GROUP_ID,
+        body="Hello all!",
+        access_token="test-token"
+    )
+
+@pytest.mark.parametrize(
+    "method, service, kwargs",
+    [
+        ("get", "get_community_messages", {}),
+        ("post", "send_community_message", {"json": {"body": "Hello"}}),
+    ],
+)
+def test_non_members_get_403_from_community_chat(client, monkeypatch, method, service, kwargs):
+    monkeypatch.setattr(
+        messages_router,
+        service,
+        MagicMock(side_effect=not_a_member_error())
+    )
+
+    response = getattr(client, method)(GROUP_CHAT_URL, **kwargs)
+
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Only community members can use this chat"}
+
+@pytest.mark.parametrize(
+    "method, service, kwargs",
+    [
+        ("get", "get_community_messages", {}),
+        ("post", "send_community_message", {"json": {"body": "Hello"}}),
+    ],
+)
+def test_other_community_chat_errors_are_not_hidden(client, monkeypatch, method, service, kwargs):
+    error = APIError({"code": "XX000", "message": "Something else broke"})
+    monkeypatch.setattr(messages_router, service, MagicMock(side_effect=error))
+
+    with pytest.raises(APIError):
+        getattr(client, method)(GROUP_CHAT_URL, **kwargs)
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"body": ""},
+        {"body": "   \n "},
+        {"body": "x" * 2001},
+        {},
+    ],
+)
+def test_rejects_invalid_community_messages(client, monkeypatch, payload):
+    send_community_message = MagicMock()
+    monkeypatch.setattr(
+        messages_router,
+        "send_community_message",
+        send_community_message
+    )
+
+    response = client.post(GROUP_CHAT_URL, json=payload)
+
+    assert response.status_code == 422
+    send_community_message.assert_not_called()
+
+@pytest.mark.parametrize(
+    "method, kwargs",
+    [
+        ("get", {}),
+        ("post", {"json": {"body": "Hello"}}),
+    ],
+)
+def test_rejects_invalid_group_ids(client, method, kwargs):
+    response = getattr(client, method)(
+        "/api/messages/communities/not-a-uuid",
+        **kwargs
+    )
+
+    assert response.status_code == 422
+
+def test_community_messages_come_back_oldest_first(monkeypatch):
+    database = MagicMock()
+    database.rpc.return_value.execute.return_value.data = [
+        {"body": "Newest"},
+        {"body": "Oldest"},
+    ]
+    monkeypatch.setattr(
+        messages_service,
+        "get_user_supabase_client",
+        lambda access_token: database
+    )
+
+    messages = messages_service.get_community_messages(GROUP_ID, "test-token")
+
+    assert [m["body"] for m in messages] == ["Oldest", "Newest"]
+    database.rpc.assert_called_once_with(
+        "get_community_messages",
+        {"p_group_id": GROUP_ID}
+    )
