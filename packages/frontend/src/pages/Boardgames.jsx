@@ -7,9 +7,12 @@ import BorrowedList from "../components/library/BorrowedList";
 // Columns from the Figma "Library" page that aren't built yet
 const UPCOMING_COLUMNS = ["Lent Out", "Requested"];
 
+// The navbar and the page's padding take 100px, so a column is at
+// most the rest of the screen and a long list scrolls inside it.
+// On wide screens it's always that tall, reaching the bottom
 function LibraryColumn({ title, children }) {
   return (
-    <section className="flex min-h-60 flex-col gap-[7px] bg-bb-cream px-[17px] pt-[7px] pb-6 min-[1001px]:min-h-[calc(100vh-100px)]">
+    <section className="flex max-h-[calc(100vh-100px)] min-h-60 flex-col gap-[7px] bg-bb-cream px-[17px] pt-[7px] pb-6 min-[1001px]:min-h-[calc(100vh-100px)]">
       <h2 className="text-center text-[20px]">{title}</h2>
       {children}
     </section>

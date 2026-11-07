@@ -6,8 +6,11 @@ function Wishlist() {
   // Remount the list after a game is added so it reloads
   const [listKey, setListKey] = useState(0);
 
+  // The navbar and the page's padding take 107px, so the panel is
+  // at most the rest of the screen and a long wishlist scrolls
+  // inside it
   return (
-    <section className="tailwind-page mx-auto mt-[7px] flex max-w-[480px] flex-col gap-[7px] bg-bb-cream px-6 py-4">
+    <section className="tailwind-page mx-auto mt-[7px] flex max-h-[calc(100vh-107px)] max-w-[480px] flex-col gap-[7px] bg-bb-cream px-6 py-4">
       <h2 className="text-center text-[20px]">My Wishlist</h2>
 
       <AddWishlistGame onGameAdded={() => setListKey((key) => key + 1)} />

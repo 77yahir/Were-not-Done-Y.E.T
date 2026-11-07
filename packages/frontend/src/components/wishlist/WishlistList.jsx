@@ -4,6 +4,7 @@ import {
   removeFromWishlist
 } from "../../services/wishlist.js";
 import GameDetailsModal from "../games/GameDetailsModal.jsx";
+import GameRows from "../games/GameRows.jsx";
 import ListMessage from "../games/ListMessage.jsx";
 import WishlistCard from "./WishlistCard.jsx";
 
@@ -81,15 +82,17 @@ function WishlistList() {
       {games.length === 0 ? (
         <ListMessage>No games on your wishlist yet</ListMessage>
       ) : (
-        games.map((game) => (
-          <WishlistCard
-            key={game.wishlist_item_id}
-            game={game}
-            onOpen={setOpenGame}
-            onRemove={handleRemoveGame}
-            isRemoving={removingId === game.wishlist_item_id}
-          />
-        ))
+        <GameRows>
+          {games.map((game) => (
+            <WishlistCard
+              key={game.wishlist_item_id}
+              game={game}
+              onOpen={setOpenGame}
+              onRemove={handleRemoveGame}
+              isRemoving={removingId === game.wishlist_item_id}
+            />
+          ))}
+        </GameRows>
       )}
 
       {openGame && (

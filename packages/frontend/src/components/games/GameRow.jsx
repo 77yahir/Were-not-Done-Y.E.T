@@ -24,12 +24,14 @@ function GameRow({
 
   return (
     <div className="relative bg-bb-brown">
+      {/* Its focus outline sits just inside the bar, since the
+          list's scroll area would cut off one drawn outside it */}
       <button
         type="button"
         onClick={onOpen}
         disabled={isRemoving}
         aria-haspopup="dialog"
-        className="flex min-h-[46px] w-full items-center gap-1 py-px pr-9 pl-[9px] text-[20px] leading-6">
+        className="flex min-h-[46px] w-full items-center gap-1 py-px pr-9 pl-[9px] text-[20px] leading-6 focus-visible:-outline-offset-2">
         {/* The box keeps titles lined up when a game has no picture */}
         <span className="size-[43px] shrink-0">
           {imageUrl && (

@@ -1,6 +1,7 @@
 import { useEffect,  useState } from "react";
 import { getBorrowedGames } from "../../services/borrowing";
 import GameRow from "../games/GameRow";
+import GameRows from "../games/GameRows";
 import ListMessage from "../games/ListMessage";
 
 function BorrowedList() {
@@ -22,12 +23,16 @@ function BorrowedList() {
 
     if (error) return <ListMessage>{error}</ListMessage>;
     if (borrowings.length === 0) return <ListMessage>Nothing here yet</ListMessage>;
-    return borrowings.map((b) => (
-        <GameRow
-            key={b.borrowing_id}
-            title={b.library_item?.board_game?.title}
-        />
-    ))
+    return (
+        <GameRows>
+            {borrowings.map((b) => (
+                <GameRow
+                    key={b.borrowing_id}
+                    title={b.library_item?.board_game?.title}
+                />
+            ))}
+        </GameRows>
+    )
 }
 
 export default BorrowedList

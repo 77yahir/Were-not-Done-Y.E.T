@@ -101,3 +101,26 @@
     outline-offset: 2px;
   }
 }
+
+/* A thin brown scroll bar for lists that scroll inside their panel.
+   Chrome and Safari draw it even when macOS would hide scroll bars.
+   Firefox has no ::-webkit-scrollbar, so it gets the standard
+   properties instead (Chrome ignores ::-webkit-scrollbar when those
+   are set, so they're kept out of its way) */
+@layer components {
+  .bb-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .bb-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--bb-brown-dark);
+  }
+
+  @supports not selector(::-webkit-scrollbar) {
+    .bb-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: var(--bb-brown-dark) transparent;
+    }
+  }
+}
