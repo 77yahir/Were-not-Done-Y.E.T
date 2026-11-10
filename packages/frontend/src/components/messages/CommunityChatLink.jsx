@@ -1,14 +1,15 @@
-import { Link } from "react-router-dom";
+import { ButtonLink } from "../ui/Button";
+import { IconChat } from "../ui/icons";
 
-// Opens a community's group chat from its Community page. Styled in
-// App.css because the Community pages don't use Tailwind
+// Opens a community's group chat from its Community page
 function CommunityChatLink({ groupId }) {
   return (
-    <Link
+    <ButtonLink
       to={`/messages/communities/${groupId}`}
-      className="message-link">
+      size="sm">
+      <IconChat className="size-4" />
       Group chat
-    </Link>
+    </ButtonLink>
   );
 }
 

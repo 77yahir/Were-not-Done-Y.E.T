@@ -1,12 +1,18 @@
-import { Link } from "react-router-dom";
+import { ButtonLink } from "../ui/Button";
+import { IconChat } from "../ui/icons";
 
-// Opens a conversation with this user from another page. Styled in
-// App.css because the Friends and Community pages don't use Tailwind
-function MessageLink({ userId }) {
+// Opens a conversation with this user from the Friends and
+// Community pages
+function MessageLink({ userId, className }) {
   return (
-    <Link to={`/messages/${userId}`} className="message-link">
+    <ButtonLink
+      to={`/messages/${userId}`}
+      variant="secondary"
+      className={className}
+      size="sm">
+      <IconChat className="size-4" />
       Message
-    </Link>
+    </ButtonLink>
   );
 }
 

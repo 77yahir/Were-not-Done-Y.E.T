@@ -1,9 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   getDiscoverableCommunities,
   requestToJoinCommunity
 } from "../../services/communities";
+import Avatar from "../ui/Avatar";
+import Button, { ButtonLink } from "../ui/Button";
+import Notice from "../ui/Notice";
+import Panel from "../ui/Panel";
+import Pill from "../ui/Pill";
+import {
+  IconClock,
+  IconCompass,
+  IconUserPlus
+} from "../ui/icons";
+import EmptyState from "./EmptyState";
 
 export function DiscoverableCommunities() {
   const [communities, setCommunities] = useState([]);
@@ -90,50 +100,89 @@ export function DiscoverableCommunities() {
   }, []);
 
   return (
-    <section>
-      <h2>Discoverable Communities</h2>
+    <Panel
+      title="Discoverable Communities"
+      icon={<IconCompass className="size-5" />}
+      bodyClassName="flex flex-col gap-3">
+      {loading && <Notice>Loading communities...</Notice>}
 
-      {loading && <p>Loading communities...</p>}
-
-      {error && <p role="alert">{error}</p>}
-      {requestError && <p role="alert">{requestError}</p>}
-
-      {!loading && !error && communities.length === 0 && (
-        <p>There are currently no discoverable communities!</p>
+      {error && (
+        <Notice tone="error" role="alert">
+          {error}
+        </Notice>
+      )}
+      {requestError && (
+        <Notice tone="error" role="alert">
+          {requestError}
+        </Notice>
       )}
 
-      {!loading &&
-        !error &&
-        communities.map((community) => (
-          <div key={community.group_id}>
-            <h3>Name: {community.name}</h3>
+      {!loading && !error && communities.length === 0 && (
+        <EmptyState icon={<IconCompass className="size-6" />}>
+          There are currently no discoverable communities!
+        </EmptyState>
+      )}
 
-            <p>Description: {community.description}</p>
+      {/* As many columns of cards as fit. empty:hidden drops the
+          list's gap when there are no communities */}
+      {!loading && !error && (
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(15rem,100%),1fr))] gap-3 empty:hidden">
+          {communities.map((community) => (
+            <li
+              key={community.group_id}
+              className="flex flex-col gap-3 rounded-xl border border-parchment-300 bg-parchment-50 p-4 shadow-sm shadow-black/10">
+              <div className="flex items-center gap-3">
+                <Avatar name={community.name} />
 
-            {community.membership_status === "approved" && (
-              <Link to={`/communities/${community.group_id}`}>
-                View Community
-              </Link>
-            )}
+                <h3 className="min-w-0 text-lg leading-tight font-bold wrap-anywhere">
+                  {community.name}
+                </h3>
+              </div>
 
-            {community.membership_status === "pending" && (
-              <p>Request Pending</p>
-            )}
+              <p className="text-sm text-ink-700 wrap-anywhere empty:hidden">
+                {community.description}
+              </p>
 
-            {(community.membership_status === null ||
-              community.membership_status === "rejected" ||
-              community.membership_status === "removed") && (
-              <button
-                type="button"
-                disabled={requestingId !== null}
-                onClick={() => handleJoin(community.group_id)}>
-                {requestingId === community.group_id
-                  ? "Submitting..."
-                  : "Request to Join"}
-              </button>
-            )}
-          </div>
-        ))}
-    </section>
+              {/* mt-auto lines the buttons up along the bottom of a
+                  row of cards */}
+              <div className="mt-auto flex flex-wrap items-center gap-2 empty:hidden">
+                {community.membership_status === "approved" && (
+                  <ButtonLink
+                    to={`/communities/${community.group_id}`}
+                    variant="secondary"
+                    size="sm">
+                    View Community
+                  </ButtonLink>
+                )}
+
+                {community.membership_status === "pending" && (
+                  <Pill tone="blue">
+                    <IconClock className="size-3.5" />
+                    Request Pending
+                  </Pill>
+                )}
+
+                {(community.membership_status === null ||
+                  community.membership_status === "rejected" ||
+                  community.membership_status ===
+                    "removed") && (
+                  <Button
+                    size="sm"
+                    disabled={requestingId !== null}
+                    onClick={() =>
+                      handleJoin(community.group_id)
+                    }>
+                    <IconUserPlus className="size-4" />
+                    {requestingId === community.group_id
+                      ? "Submitting..."
+                      : "Request to Join"}
+                  </Button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
   );
 }

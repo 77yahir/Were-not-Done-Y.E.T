@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { addGame } from "../../services/games";
 import Modal from "../ui/Modal";
+import { fieldClass } from "../ui/styles";
 import AddGameButton from "./AddGameButton";
 import GameDetailsFields from "./GameDetailsFields";
 import GameForm from "./GameForm";
-import ListMessage from "./ListMessage";
 import {
   CONDITIONS,
   EMPTY_GAME_DETAILS,
-  GAME_FIELD_CLASS,
   validateGameDetails
 } from "./gameDetails";
 
@@ -20,17 +19,20 @@ const EMPTY_FORM = {
 function validateGame(form) {
   const { details, error } = validateGameDetails(form);
   if (error) return { error };
-  if (!form.condition) return { error: "Condition is required." };
+  if (!form.condition)
+    return { error: "Condition is required." };
 
   return {
     game: { ...details, condition: form.condition }
   };
 }
 
-function AddGame({ onGameAdded }) {
+// The Add Game button and its pop-up. The page shows the "Game
+// added!" message by the list: onOpen tells it the form opened, so an
+// old message can go, and onGameAdded that a game was added
+function AddGame({ onOpen, onGameAdded }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [showForm, setShowForm] = useState(false);
-  const [message, setMessage] = useState("");
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +46,7 @@ function AddGame({ onGameAdded }) {
   }
 
   function openForm() {
-    setMessage("");
+    onOpen?.();
     setShowForm(true);
   }
 
@@ -68,7 +70,6 @@ function AddGame({ onGameAdded }) {
 
     try {
       await addGame(game);
-      setMessage("Game added!");
       closeForm();
       onGameAdded?.();
     } catch (error) {
@@ -82,8 +83,6 @@ function AddGame({ onGameAdded }) {
   return (
     <>
       <AddGameButton onClick={openForm} />
-
-      {message && <ListMessage>{message}</ListMessage>}
 
       {showForm && (
         <Modal title="Add Game" onClose={closeForm}>
@@ -102,10 +101,12 @@ function AddGame({ onGameAdded }) {
               value={form.condition}
               onChange={handleChange}
               aria-label="Condition"
-              className={GAME_FIELD_CLASS}
+              className={`${fieldClass} cursor-pointer`}
               required>
               {CONDITIONS.map((condition) => (
-                <option key={condition.value} value={condition.value}>
+                <option
+                  key={condition.value}
+                  value={condition.value}>
                   Condition: {condition.label}
                 </option>
               ))}

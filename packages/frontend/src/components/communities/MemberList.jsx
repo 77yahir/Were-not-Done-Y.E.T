@@ -5,6 +5,13 @@ import {
   removeCommunityMember
 } from "../../services/communities";
 import MessageLink from "../messages/MessageLink";
+import Avatar from "../ui/Avatar";
+import Button from "../ui/Button";
+import Notice from "../ui/Notice";
+import Panel from "../ui/Panel";
+import { IconUsers } from "../ui/icons";
+import EmptyState from "./EmptyState";
+import RolePill from "./RolePill";
 
 export function MemberList({ groupId, permissions }) {
   const [members, setMembers] = useState([]);
@@ -132,42 +139,77 @@ export function MemberList({ groupId, permissions }) {
     };
   }, [groupId]);
 
+  // On wide screens this shares a row with the join requests, and
+  // lg:flex-1 gives it all the room they leave
   return (
-    <div>
-      <h2>Community Members</h2>
+    <Panel
+      title="Community Members"
+      icon={<IconUsers className="size-5" />}
+      className="min-w-0 lg:flex-1"
+      bodyClassName="flex flex-col gap-3">
+      {loading && <Notice>Loading community members...</Notice>}
 
-      {loading && <p>Loading community members...</p>}
-
-      {error && <p role="alert">{error}</p>}
-
-      {removeError && <p role="alert">{removeError}</p>}
-
-      {!loading && !error && members.length === 0 && (
-        <p>No community members found</p>
+      {error && (
+        <Notice tone="error" role="alert">
+          {error}
+        </Notice>
       )}
 
-      {!loading &&
-        !error &&
-        members.map((member) => (
-          <div key={member.user_id}>
-            <p>{member.username}</p>
-            <p>Role: {member.role}</p>
+      {removeError && (
+        <Notice tone="error" role="alert">
+          {removeError}
+        </Notice>
+      )}
 
-            {myUserId && member.user_id !== myUserId && (
-              <MessageLink userId={member.user_id} />
-            )}
+      {!loading && !error && members.length === 0 && (
+        <EmptyState icon={<IconUsers className="size-6" />}>
+          No community members found
+        </EmptyState>
+      )}
 
-            {canRemoveMember(member) && (
-              <button
-                disabled={removingId !== null || loading}
-                onClick={() => handleRemove(member)}>
-                {removingId === member.user_id
-                  ? "Removing..."
-                  : "Remove"}
-              </button>
-            )}
-          </div>
-        ))}
-    </div>
+      {/* As many columns as fit. empty:hidden drops the list's gap
+          when there are no members */}
+      {!loading && !error && (
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(22rem,100%),1fr))] gap-3 empty:hidden">
+          {members.map((member) => (
+            <li
+              key={member.user_id}
+              className="flex flex-wrap items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50 p-3 shadow-sm shadow-black/10">
+              <div className="flex min-w-0 flex-1 basis-40 items-center gap-3">
+                <Avatar name={member.username} />
+
+                <div className="min-w-0">
+                  <p className="font-display text-lg leading-tight font-bold wrap-anywhere">
+                    {member.username}
+                  </p>
+                  <p className="mt-1">
+                    <RolePill role={member.role} />
+                  </p>
+                </div>
+              </div>
+
+              {/* Wraps onto its own line when the card is narrow */}
+              <div className="ml-auto flex flex-wrap gap-2 empty:hidden">
+                {myUserId && member.user_id !== myUserId && (
+                  <MessageLink userId={member.user_id} />
+                )}
+
+                {canRemoveMember(member) && (
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    disabled={removingId !== null || loading}
+                    onClick={() => handleRemove(member)}>
+                    {removingId === member.user_id
+                      ? "Removing..."
+                      : "Remove"}
+                  </Button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
   );
 }

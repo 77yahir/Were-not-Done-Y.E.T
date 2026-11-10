@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import ChatCard from "./ChatCard";
 
 function getPreview(conversation) {
   if (conversation.last_message) {
@@ -10,28 +10,12 @@ function getPreview(conversation) {
 
 function ConversationCard({ conversation }) {
   return (
-    <NavLink
+    <ChatCard
       to={`/messages/${conversation.user_id}`}
-      className={({ isActive }) =>
-        `block p-2 text-bb-text no-underline hover:bg-bb-brown-dark ${
-          isActive ? "bg-bb-brown-dark" : "bg-bb-brown"
-        }`
-      }>
-      <span className="flex items-center justify-between gap-2">
-        <span className="truncate">{conversation.username}</span>
-
-        {conversation.unread_count > 0 && (
-          <span className="rounded-full bg-bb-cream px-1.5 text-xs">
-            {conversation.unread_count}
-            <span className="sr-only"> unread</span>
-          </span>
-        )}
-      </span>
-
-      <span className="block truncate text-xs">
-        {getPreview(conversation)}
-      </span>
-    </NavLink>
+      name={conversation.username}
+      preview={getPreview(conversation)}
+      unreadCount={conversation.unread_count}
+    />
   );
 }
 

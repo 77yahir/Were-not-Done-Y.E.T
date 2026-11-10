@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getUserProfile } from "../services/users";
 import UserLibrary from "../components/users/UserLibrary";
+import Avatar from "../components/ui/Avatar";
+import { ButtonLink } from "../components/ui/Button";
+import Notice from "../components/ui/Notice";
+import PageHeader from "../components/ui/PageHeader";
+import Panel from "../components/ui/Panel";
+import {
+  IconArrowLeft,
+  IconUser
+} from "../components/ui/icons";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -44,42 +53,65 @@ export default function UserProfile() {
     };
   }, [userId]);
 
+  // The page already sits inside the layout's <main>
   return (
-    <main>
-      <Link to="/friends">Back to Friends</Link>
+    <div>
+      <ButtonLink
+        to="/friends"
+        variant="secondary"
+        size="sm"
+        className="mb-4">
+        <IconArrowLeft className="size-4" />
+        Back to Friends
+      </ButtonLink>
 
-      <h1>User Profile</h1>
+      <PageHeader
+        title="User Profile"
+        icon={<IconUser className="size-8" />}
+      />
 
-      {loading && <p>Loading profile...</p>}
+      {loading && (
+        <Panel as="div">
+          <Notice>Loading profile...</Notice>
+        </Panel>
+      )}
 
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <Panel as="div">
+          <Notice tone="error" role="alert">
+            {error}
+          </Notice>
+        </Panel>
+      )}
 
       {!loading && !error && profile && (
-        <section>
-          <div
-            aria-label="Default profile avatar"
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: "50%",
-              background: "#ddd",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 40
-            }}>
-            {profile.username.charAt(0).toUpperCase()}
-          </div>
+        <div className="flex flex-col gap-5">
+          <Panel>
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:gap-6 sm:text-left">
+              <Avatar
+                name={profile.username}
+                size="xl"
+                label="Default profile avatar"
+              />
+
+              <div className="max-w-full min-w-0">
+                <h2 className="text-3xl leading-tight font-extrabold wrap-anywhere sm:text-4xl">
+                  {profile.username}
+                </h2>
+
+                <p className="mt-1 text-ink-700">
+                  Member since:{" "}
+                  {new Date(
+                    profile.created_at
+                  ).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </Panel>
 
           <UserLibrary userId={userId} />
-          <h2>{profile.username}</h2>
-
-          <p>
-            Member since:{" "}
-            {new Date(profile.created_at).toLocaleDateString()}
-          </p>
-        </section>
+        </div>
       )}
-    </main>
+    </div>
   );
 }

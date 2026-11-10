@@ -1,6 +1,27 @@
 import { useEffect, useState } from "react";
 import { getUserLibrary } from "../../services/users";
 import GameDetailsModal from "../games/GameDetailsModal";
+import GameTile from "../games/GameTile";
+import { gameSummary } from "../games/gameDetails";
+import Notice from "../ui/Notice";
+import Panel from "../ui/Panel";
+import Pill from "../ui/Pill";
+import { IconLibrary, IconMeeple } from "../ui/icons";
+import { gameGridClass } from "../ui/styles";
+
+// The badge on a game's card, as in your own Library. Nothing when
+// the library doesn't say
+function availabilityPill(game) {
+  if (game.is_available === true) {
+    return <Pill tone="green">Available</Pill>;
+  }
+
+  if (game.is_available === false) {
+    return <Pill tone="red">Unavailable</Pill>;
+  }
+
+  return null;
+}
 
 export default function UserLibrary({ userId }) {
   const [games, setGames] = useState([]);
@@ -50,32 +71,41 @@ export default function UserLibrary({ userId }) {
   }, [userId]);
 
   return (
-    <section>
-      <h2>Game Library</h2>
+    <Panel
+      title="Game Library"
+      icon={<IconLibrary className="size-5" />}>
+      {loading && <Notice>Loading games...</Notice>}
 
-      {loading && <p>Loading games...</p>}
-
+      {/* Not being friends yet is the usual reason, so this isn't
+          shown as an error */}
       {error && (
-        <p className="text-base font-normal">{error}</p>
+        <div className="flex flex-col items-center gap-2 py-8 text-center">
+          <IconMeeple className="size-10 text-parchment-400" />
+          <Notice>{error}</Notice>
+        </div>
       )}
 
       {!loading && !error && games.length === 0 && (
-        <p>No games in this library yet</p>
+        <div className="flex flex-col items-center gap-2 py-8 text-center">
+          <IconMeeple className="size-10 text-parchment-400" />
+          <Notice>No games in this library yet</Notice>
+        </div>
       )}
 
-      {!loading &&
-        !error &&
-        games.map((game) => (
-          <div key={game.library_item_id}>
-            <p>{game.title}</p>
-
-            <button
-              type="button"
-              onClick={() => setOpenGame(game)}>
-              View Details
-            </button>
-          </div>
-        ))}
+      {!loading && !error && games.length > 0 && (
+        <div className={gameGridClass}>
+          {games.map((game) => (
+            <GameTile
+              key={game.library_item_id}
+              title={game.title}
+              imageUrl={game.image_url}
+              summary={gameSummary(game)}
+              status={availabilityPill(game)}
+              onOpen={() => setOpenGame(game)}
+            />
+          ))}
+        </div>
+      )}
 
       {openGame && (
         <GameDetailsModal
@@ -83,6 +113,6 @@ export default function UserLibrary({ userId }) {
           onClose={() => setOpenGame(null)}
         />
       )}
-    </section>
+    </Panel>
   );
 }

@@ -5,7 +5,8 @@ import {
   getUnreadMessageCount,
   MESSAGES_READ_EVENT
 } from "../../services/messages";
-import mailIcon from "../../assets/icons/mail.svg";
+import { IconMail } from "../ui/icons";
+import { navBadgeClass, navLinkClass } from "./navStyles";
 
 // How often the navbar checks for new messages
 const POLL_MS = 15000;
@@ -26,12 +27,11 @@ function MessagesNavLink() {
   }, [reload]);
 
   return (
-    <NavLink to="/messages" className="nav-button relative">
-      <img src={mailIcon} alt="" width="32" height="32" />
+    <NavLink to="/messages" className={navLinkClass}>
+      <IconMail className="size-5 shrink-0" />
       Messages
-
       {unreadCount > 0 && (
-        <span className="notification-badge">
+        <span className={navBadgeClass}>
           {unreadCount}
           <span className="sr-only"> unread</span>
         </span>

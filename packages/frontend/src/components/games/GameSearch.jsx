@@ -3,7 +3,8 @@ import {
   getSearchedGame,
   searchGames
 } from "../../services/games";
-import { GAME_FIELD_CLASS } from "./gameDetails";
+import { IconSearch } from "../ui/icons";
+import { fieldClass } from "../ui/styles";
 
 const MIN_SEARCH_LENGTH = 3;
 
@@ -114,38 +115,41 @@ function GameSearch({ onSelect }) {
   }
 
   return (
-    <div className="flex w-full flex-col gap-1.5">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Search for a game"
-        aria-label="Search BoardGameGeek for a game"
-        autoComplete="off"
-        className={GAME_FIELD_CLASS}
-        autoFocus
-      />
+    <div className="flex flex-col gap-2 border-b border-parchment-300 pb-3">
+      <div className="relative">
+        <IconSearch className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-500" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Search for a game"
+          aria-label="Search BoardGameGeek for a game"
+          autoComplete="off"
+          className={`${fieldClass} pl-9`}
+          autoFocus
+        />
+      </div>
 
       {showResults && message && (
         <p
-          className="m-0 text-center text-[13px]"
+          className="text-center text-sm text-ink-700"
           role="status">
           {message}
         </p>
       )}
 
       {showResults && results.length > 0 && (
-        <ul className="m-0 flex max-h-[200px] list-none flex-col gap-1 overflow-y-auto p-0">
+        <ul className="bb-scrollbar flex max-h-52 flex-col gap-0.5 overflow-y-auto rounded-lg border border-parchment-300 bg-parchment-50 p-1">
           {results.map((game) => (
             <li key={game.bgg_id}>
               <button
                 type="button"
                 onClick={() => handleSelect(game)}
                 disabled={loadingId !== null}
-                className="flex w-full items-center gap-2 text-left text-[16px]">
+                className="flex w-full cursor-pointer items-center gap-3 rounded-md p-1.5 text-left text-sm transition-colors not-disabled:hover:bg-parchment-200 disabled:cursor-default disabled:opacity-60">
                 {/* The box keeps names lined up when a game has no image */}
-                <span className="size-10 shrink-0 bg-bb-tan">
+                <span className="size-10 shrink-0 overflow-hidden rounded bg-parchment-200">
                   {game.thumbnail && (
                     <img
                       src={game.thumbnail}
@@ -154,7 +158,7 @@ function GameSearch({ onSelect }) {
                     />
                   )}
                 </span>
-                <span>
+                <span className="min-w-0 wrap-anywhere">
                   {loadingId === game.bgg_id
                     ? "Loading..."
                     : game.year > 0
@@ -170,7 +174,7 @@ function GameSearch({ onSelect }) {
       {/* BGG's terms require crediting them by name. A public
           release would need their "Powered by BGG" logo here */}
       <a
-        className="text-center text-[13px] text-bb-text"
+        className="self-center py-1 text-xs text-ink-500 underline underline-offset-2 hover:text-ink-900"
         href="https://boardgamegeek.com"
         target="_blank"
         rel="noreferrer">

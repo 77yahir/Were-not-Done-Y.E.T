@@ -1,9 +1,14 @@
 import { useEffect, useRef } from "react";
+import Notice from "../ui/Notice";
+import { IconChat } from "../ui/icons";
 import MessageBubble from "./MessageBubble";
 
 // The scrolling list of messages in a conversation or group chat.
 // Group chats pass showSenders so each message is labelled with its
-// sender's name
+// sender's name. A short chat sits at the bottom, next to the message
+// box, and a long one scrolls. The first child's top margin does
+// that: unlike justify-content, an auto margin never pushes messages
+// out of reach above the top
 function MessageLog({ data, error, emptyText, showSenders }) {
   const messages = data?.messages;
   const messageCount = messages?.length;
@@ -21,19 +26,27 @@ function MessageLog({ data, error, emptyText, showSenders }) {
       ref={listRef}
       role="log"
       aria-live="polite"
-      className="flex flex-1 flex-col gap-2 overflow-y-auto bg-bb-tan-overlay p-3">
+      className="bb-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-xl bg-parchment-200/50 p-3 shadow-inner shadow-black/5 ring-1 ring-parchment-300 sm:p-4 [&>:first-child]:mt-auto">
       {!data && !error && (
-        <p className="m-0 text-center">Loading messages...</p>
+        <Notice className="m-auto text-center">
+          Loading messages...
+        </Notice>
       )}
 
       {!data && error && (
-        <p role="alert" className="m-0 text-center">
+        <Notice
+          role="alert"
+          tone="error"
+          className="m-auto text-center">
           Failed to load messages
-        </p>
+        </Notice>
       )}
 
       {messageCount === 0 && (
-        <p className="m-0 text-center">{emptyText}</p>
+        <div className="m-auto flex flex-col items-center gap-2 text-center">
+          <IconChat className="size-10 text-wood-400" />
+          <Notice>{emptyText}</Notice>
+        </div>
       )}
 
       {messages?.map((message) => (

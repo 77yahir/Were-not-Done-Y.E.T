@@ -1,4 +1,7 @@
 import { useState } from "react";
+import Button from "../ui/Button";
+import Notice from "../ui/Notice";
+import { fieldClass } from "../ui/styles";
 
 // Keep in sync with MessageCreate in the backend
 const MAX_MESSAGE_LENGTH = 2000;
@@ -63,12 +66,15 @@ function MessageForm({
   return (
     <form onSubmit={handleSubmit}>
       {error && (
-        <p role="alert" className="m-0 mb-1 text-sm">
+        <Notice
+          role="alert"
+          tone="error"
+          className="mb-2 font-bold">
           {error}
-        </p>
+        </Notice>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex items-end gap-2">
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -77,15 +83,14 @@ function MessageForm({
           aria-label="Write a message"
           maxLength={MAX_MESSAGE_LENGTH}
           rows={2}
-          className="min-w-0 flex-1 resize-none"
+          className={`${fieldClass} min-w-0 flex-1 resize-none`}
         />
 
-        <button
+        <Button
           type="submit"
-          disabled={sending || !draft.trim()}
-          className="px-5">
+          disabled={sending || !draft.trim()}>
           {sending ? "Sending..." : "Send"}
-        </button>
+        </Button>
       </div>
     </form>
   );

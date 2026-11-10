@@ -2,6 +2,10 @@ import { useParams } from "react-router-dom";
 import CommunityChatThread from "../components/messages/CommunityChatThread";
 import ConversationList from "../components/messages/ConversationList";
 import MessageThread from "../components/messages/MessageThread";
+import { IconChat, IconMail } from "../components/ui/icons";
+import Notice from "../components/ui/Notice";
+import PageHeader from "../components/ui/PageHeader";
+import Panel from "../components/ui/Panel";
 import { usePolledData } from "../hooks/usePolledData";
 import {
   getCommunityChats,
@@ -50,31 +54,54 @@ function Messages() {
     (chat) => chat.group_id === groupId
   );
 
+  // On wide screens the page fills the window exactly, and the list
+  // and the open chat scroll inside their panels. Below lg the header
+  // is two rows, so the panels are the window's height minus about
+  // 15.5rem for it, the page title and the padding
   return (
-    <div className="tailwind-page mt-[7px] bg-bb-cream px-6 py-4">
-      <h1>Messages</h1>
+    <div className="flex flex-col lg:h-[calc(100vh-7rem)] lg:min-h-[30rem]">
+      <PageHeader
+        title="Messages"
+        subtitle="Chat with friends and communities."
+        icon={<IconMail className="size-8" />}
+      />
 
-      {!data && !error && <p>Loading conversations...</p>}
+      {!data && !error && (
+        <Panel as="div">
+          <Notice>Loading conversations...</Notice>
+        </Panel>
+      )}
 
       {!data && error && (
-        <p role="alert">Failed to load conversations</p>
+        <Panel as="div">
+          <Notice role="alert" tone="error">
+            Failed to load conversations
+          </Notice>
+        </Panel>
       )}
 
       {data && (
-        <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
+        <div className="grid gap-5 md:h-[calc(100dvh-15.5rem)] md:min-h-96 md:grid-cols-[20rem_minmax(0,1fr)] md:grid-rows-[minmax(0,1fr)] lg:h-auto lg:min-h-0 lg:flex-1">
           {/* Small screens show the list or a conversation, not both */}
-          <div
-            className={`md:h-[calc(100vh-12rem)] md:min-h-96 md:overflow-y-auto ${
-              isOpen ? "hidden md:block" : ""
-            }`}>
+          <Panel
+            as="div"
+            className={`min-h-0 flex-col overflow-hidden ${
+              isOpen ? "hidden md:flex" : "flex"
+            }`}
+            bodyClassName="bb-scrollbar min-h-0 flex-1 overflow-y-auto">
             <ConversationList
               conversations={conversations}
               chats={chats}
               chatsFailed={chatsFailed}
             />
-          </div>
+          </Panel>
 
-          <div className={isOpen ? "" : "hidden md:block"}>
+          <Panel
+            as="div"
+            className={`h-[calc(100dvh-15.5rem)] min-h-96 flex-col md:h-auto md:min-h-0 ${
+              isOpen ? "flex" : "hidden md:flex"
+            }`}
+            bodyClassName="flex min-h-0 flex-1 flex-col">
             {selectedChat ? (
               <CommunityChatThread
                 key={selectedChat.group_id}
@@ -88,16 +115,22 @@ function Messages() {
                 onChange={reload}
               />
             ) : (
-              <p className="m-0 text-center">
-                {getPlaceholder(
-                  userId,
-                  groupId,
-                  chats,
-                  chatsFailed
-                )}
-              </p>
+              <div className="m-auto flex max-w-sm flex-col items-center gap-3 text-center">
+                <span className="flex size-16 items-center justify-center rounded-full bg-parchment-200 text-wood-600 ring-1 ring-parchment-300">
+                  <IconChat className="size-8" />
+                </span>
+
+                <p className="text-lg text-ink-700">
+                  {getPlaceholder(
+                    userId,
+                    groupId,
+                    chats,
+                    chatsFailed
+                  )}
+                </p>
+              </div>
             )}
-          </div>
+          </Panel>
         </div>
       )}
     </div>

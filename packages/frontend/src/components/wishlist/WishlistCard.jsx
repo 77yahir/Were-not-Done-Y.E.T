@@ -1,9 +1,9 @@
-import GameRow from "../games/GameRow";
+import GameTile from "../games/GameTile";
 import { gameSummary } from "../games/gameDetails";
 
 function WishlistCard({ game, onOpen, onRemove, isRemoving }) {
   return (
-    <GameRow
+    <GameTile
       title={game.title}
       imageUrl={game.image_url}
       summary={gameSummary(game)}

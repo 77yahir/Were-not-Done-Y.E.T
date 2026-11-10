@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { getMyCommunities } from "../../services/communities";
+import Notice from "../ui/Notice";
+import Panel from "../ui/Panel";
+import { IconUsers } from "../ui/icons";
 import { CommunityCard } from "./CommunityCard";
+import EmptyState from "./EmptyState";
 
 export function MyCommunities() {
   const [communities, setCommunities] = useState([]);
@@ -39,25 +43,34 @@ export function MyCommunities() {
   }, []);
 
   return (
-    <section>
-      <h2>My Communities</h2>
+    <Panel
+      title="My Communities"
+      icon={<IconUsers className="size-5" />}
+      bodyClassName="flex flex-col gap-3">
+      {loading && <Notice>Loading communities...</Notice>}
 
-      {loading && <p>Loading communities...</p>}
-
-      {error && <p role="alert">{error}</p>}
-
-      {!loading && !error && communities.length === 0 && (
-        <p>You haven't joined any communities yet</p>
+      {error && (
+        <Notice tone="error" role="alert">
+          {error}
+        </Notice>
       )}
 
-      {!loading &&
-        !error &&
-        communities.map((community) => (
-          <CommunityCard
-            key={community.group_id}
-            community={community}
-          />
-        ))}
-    </section>
+      {!loading && !error && communities.length === 0 && (
+        <EmptyState icon={<IconUsers className="size-6" />}>
+          You haven't joined any communities yet
+        </EmptyState>
+      )}
+
+      {/* empty:hidden drops the list's gap when it has nothing in it */}
+      {!loading && !error && (
+        <ul className="flex flex-col gap-2 empty:hidden">
+          {communities.map((community) => (
+            <li key={community.group_id}>
+              <CommunityCard community={community} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
   );
 }

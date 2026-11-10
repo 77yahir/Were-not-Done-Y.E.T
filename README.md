@@ -70,6 +70,11 @@ the Supabase project credentials
 
 Do not push `.env` files to GitHub
 
+Board game search on the Add Game and Wishlist forms also needs
+a BoardGameGeek application token. Set it as `BGG_API_TOKEN` in
+`packages/backend/.env` and restart the backend. Without it,
+games can still be typed in by hand
+
 ### 3. Run the Project
 
 Open two terminals

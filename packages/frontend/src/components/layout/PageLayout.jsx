@@ -40,7 +40,7 @@ function PageLayout() {
   return (
     <>
       <Navbar user={session.user} />
-      <main className="page-content">
+      <main className="mx-auto w-full max-w-[90rem] px-3 py-5 sm:px-5 lg:py-6">
         <Outlet />
       </main>
     </>

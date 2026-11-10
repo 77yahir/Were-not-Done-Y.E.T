@@ -1,108 +1,147 @@
-/* Tailwind's theme and utilities, used by the Library, Wishlist and Messages
-   pages. Friends, Communities and the rest of the app use App.css instead.
-   Tailwind's reset (Preflight) is left out on purpose: those pages rely on the
-   browser's default heading sizes and margins */
+/* Board Buddies styles. Every component styles itself with Tailwind
+   utilities. This file only holds what they share: the colors and
+   fonts of the cozy game-shelf look, and a few textures */
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
 
-/* Board Buddies colors and font, taken from the Figma design */
-:root {
-  --bb-tan: #c19a6b;
-  --bb-cream: #fbf1d7;
-  --bb-brown: #a67b5b;
-  --bb-brown-dark: #8f6a4e;
-  --bb-tan-overlay: rgba(193, 154, 107, 0.65);
-  --bb-text: #000;
+@theme {
+  /* Dark wood behind every page */
+  --color-wood-950: #170f09;
+  --color-wood-900: #24170f;
+  --color-wood-800: #342216;
+  --color-wood-700: #4a3120;
+  --color-wood-600: #6b4a30;
+  --color-wood-500: #8a6444;
+  --color-wood-400: #a98260;
 
-  --bb-font: "Galindo", system-ui, sans-serif;
+  /* Parchment panels, cards and pop-ups */
+  --color-parchment-50: #fdf8ec;
+  --color-parchment-100: #f7ecd2;
+  --color-parchment-200: #efdcb4;
+  --color-parchment-300: #e0c590;
+  --color-parchment-400: #c9a66a;
 
-  font-family: var(--bb-font);
-  font-size: 16px;
-  color: var(--bb-text);
-  background: var(--bb-tan);
-  color-scheme: light;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Text on parchment */
+  --color-ink-900: #2a1c11;
+  --color-ink-700: #5a4330;
+  --color-ink-500: #7d6249;
+
+  /* Main actions and "available" */
+  --color-forest-50: #eef6eb;
+  --color-forest-100: #d5ebcf;
+  --color-forest-600: #2f6b3a;
+  --color-forest-700: #24562e;
+  --color-forest-800: #1d4525;
+
+  /* Removing things, errors and "unavailable" */
+  --color-berry-100: #f8dbd4;
+  --color-berry-600: #b0412f;
+  --color-berry-700: #8f3224;
+
+  /* The logo, highlights and focus outlines on wood */
+  --color-gold-300: #f6cf7d;
+  --color-gold-400: #efb04a;
+  --color-gold-500: #d9922b;
+
+  /* "Pending" and other neutral notices */
+  --color-lake-100: #dce8f5;
+  --color-lake-700: #2f5b88;
+
+  --font-display: "Alegreya", Georgia, "Times New Roman", serif;
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-panel:
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    0 2px 6px rgb(0 0 0 / 0.3),
+    0 14px 32px -12px rgb(0 0 0 / 0.65);
 }
 
-/* The same colors as Tailwind utilities, e.g. bg-bb-brown */
-@theme inline {
-  --color-bb-tan: var(--bb-tan);
-  --color-bb-cream: var(--bb-cream);
-  --color-bb-brown: var(--bb-brown);
-  --color-bb-brown-dark: var(--bb-brown-dark);
-  --color-bb-tan-overlay: var(--bb-tan-overlay);
-  --color-bb-text: var(--bb-text);
-}
-
-/* Global element styles. They sit in a layer because rules outside a layer
-   always beat Tailwind utilities, which would make classes like bg-bb-cream
-   do nothing on a button */
 @layer base {
-  * {
-    box-sizing: border-box;
+  html {
+    color-scheme: light;
   }
 
   body {
-    margin: 0;
     min-height: 100vh;
-    background: var(--bb-tan);
+    color: var(--color-parchment-100);
+    /* Lamp light from above on dark wood planks */
+    background-color: var(--color-wood-900);
+    background-image:
+      radial-gradient(
+        120% 70% at 50% -10%,
+        rgb(255 190 110 / 0.12),
+        transparent 60%
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgb(0 0 0 / 0.2) 0 2px,
+        transparent 2px 180px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgb(255 255 255 / 0.018) 0 1px,
+        transparent 1px 9px
+      ),
+      linear-gradient(
+        180deg,
+        var(--color-wood-800),
+        var(--color-wood-950)
+      );
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1,
   h2,
-  h3 {
-    font-weight: 400;
-    margin: 0;
+  h3,
+  h4 {
+    font-family: var(--font-display);
   }
 
-  /* Brown bars are the buttons and inputs throughout the design */
-  button,
-  input,
-  select,
-  textarea {
-    font-family: inherit;
-    font-size: inherit;
-    color: var(--bb-text);
-  }
-
-  button {
-    background: var(--bb-brown);
-    border: none;
-    padding: 6px 12px;
-    cursor: pointer;
-  }
-
-  button:hover:not(:disabled) {
-    background: var(--bb-brown-dark);
-  }
-
-  button:disabled {
-    opacity: 0.6;
-    cursor: default;
-  }
-
-  input,
-  select,
-  textarea {
-    background: var(--bb-brown);
-    border: none;
-    padding: 6px 12px;
-  }
-
-  input::placeholder,
-  textarea::placeholder {
-    color: rgba(0, 0, 0, 0.7);
-  }
-
+  /* Gold shows up on the wood. Parchment panels and pop-ups switch
+     it to dark ink by setting --focus-color */
   :focus-visible {
-    outline: 2px solid var(--bb-text);
+    outline: 2px solid var(--focus-color, var(--color-gold-300));
     outline-offset: 2px;
   }
 }
 
-/* A thin brown scroll bar for lists that scroll inside their panel.
+/* Aged paper for panels: lighter in the middle, darker at the edges */
+@utility bg-parchment {
+  background-color: var(--color-parchment-100);
+  background-image:
+    radial-gradient(
+      130% 110% at 50% 0%,
+      var(--color-parchment-50) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      160% 140% at 50% 110%,
+      rgb(201 166 106 / 0.3),
+      transparent 60%
+    );
+}
+
+/* The darker wood of the top bar */
+@utility bg-wood-bar {
+  background-color: var(--color-wood-950);
+  background-image:
+    linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.05),
+      transparent 45%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.02) 0 1px,
+      transparent 1px 7px
+    );
+}
+
+/* A thin scroll bar for lists that scroll inside their panel.
    Chrome and Safari draw it even when macOS would hide scroll bars.
    Firefox has no ::-webkit-scrollbar, so it gets the standard
    properties instead (Chrome ignores ::-webkit-scrollbar when those
@@ -114,13 +153,17 @@
   }
 
   .bb-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--bb-brown-dark);
+    background-color: var(--color-wood-400);
+    /* A see-through 2px edge keeps the thumb off the content */
+    border-left: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 9999px;
   }
 
   @supports not selector(::-webkit-scrollbar) {
     .bb-scrollbar {
       scrollbar-width: thin;
-      scrollbar-color: var(--bb-brown-dark) transparent;
+      scrollbar-color: var(--color-wood-400) transparent;
     }
   }
 }

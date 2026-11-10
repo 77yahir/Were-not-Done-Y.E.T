@@ -4,8 +4,10 @@ import {
   removeFromWishlist
 } from "../../services/wishlist.js";
 import GameDetailsModal from "../games/GameDetailsModal.jsx";
-import GameRows from "../games/GameRows.jsx";
+import GameGrid from "../games/GameGrid.jsx";
 import ListMessage from "../games/ListMessage.jsx";
+import { IconHeart } from "../ui/icons.jsx";
+import Notice from "../ui/Notice.jsx";
 import WishlistCard from "./WishlistCard.jsx";
 
 function WishlistList() {
@@ -25,8 +27,7 @@ function WishlistList() {
 
       setGames((current) =>
         current.filter(
-          (game) =>
-            game.wishlist_item_id !== wishlistItemId
+          (game) => game.wishlist_item_id !== wishlistItemId
         )
       );
 
@@ -72,17 +73,28 @@ function WishlistList() {
   }
 
   if (error) {
-    return <ListMessage>{error}</ListMessage>;
+    return <ListMessage tone="error">{error}</ListMessage>;
   }
 
   return (
     <>
-      {message && <ListMessage>{message}</ListMessage>}
+      {message && (
+        <Notice
+          tone={
+            message === "Failed to remove game"
+              ? "error"
+              : "success"
+          }>
+          {message}
+        </Notice>
+      )}
 
       {games.length === 0 ? (
-        <ListMessage>No games on your wishlist yet</ListMessage>
+        <ListMessage icon={<IconHeart className="size-8" />}>
+          No games on your wishlist yet
+        </ListMessage>
       ) : (
-        <GameRows>
+        <GameGrid>
           {games.map((game) => (
             <WishlistCard
               key={game.wishlist_item_id}
@@ -92,7 +104,7 @@ function WishlistList() {
               isRemoving={removingId === game.wishlist_item_id}
             />
           ))}
-        </GameRows>
+        </GameGrid>
       )}
 
       {openGame && (
