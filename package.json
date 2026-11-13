@@ -1,4 +1,13 @@
 {
+  "name": "board-buddies",
+  "private": true,
+  "scripts": {
+    "start:frontend": "npm --prefix packages/frontend run dev",
+    "start:backend": "python -m uvicorn app.main:app --app-dir packages/backend --reload --reload-dir packages/backend",
+    "build": "npm --prefix packages/frontend run build",
+    "test": "cd packages/backend && python -m pytest tests -v",
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
+  },
   "devDependencies": {
     "@eslint/compat": "^2.1.1",
     "@eslint/eslintrc": "^3.3.7",
@@ -6,8 +15,5 @@
     "eslint": "^10.10.0",
     "globals": "^17.12.0",
     "prettier": "^3.9.7"
-  },
-  "scripts": {
-    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
   }
 }
