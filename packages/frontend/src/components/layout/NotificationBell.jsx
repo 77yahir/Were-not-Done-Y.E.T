@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getNotifications, markAsRead } from "../../services/notifications"
+import { respondToBorrowRequest } from "../../services/borrowing";
 import bell from "../../assets/icons/bell.svg"
 
 function NotificationBell() {
@@ -38,6 +39,17 @@ function NotificationBell() {
         }
     }
 
+    async function handleDecision(notification, decision){
+        try {
+            await respondToBorrowRequest(notification.related_borrowing_id, decision);
+            const data = await getNotifications();
+            setNotifications(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error(err);
+            setError(err.status === 409? "game already borrowed" : "coudn't update request")
+        }
+    }
+
     return (
         <div className="nav-user notification-bell">
         <button
@@ -67,6 +79,13 @@ function NotificationBell() {
                     {n.sender?.username && <strong>{n.sender.username} </strong>}
                     {n.message}
                     </button>
+
+                    {n.type === "borrow_request" && n.related_borrowing_id && (
+                        <div className="notification-actions">
+                            <button type="button" onClick={() => handleDecision(n, "approved")}>Approve</button>
+                            <button type="button" onClick={() => handleDecision(n, "declined")}>Deny</button>
+                        </div>
+                    )}
                 </li>
                 ))}
             </ul>

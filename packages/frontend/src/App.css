@@ -289,3 +289,15 @@
 .notification-menu .read {
   opacity: 0.6;
 }
+
+.notification-menu .notification-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 8px 6px;
+}
+
+.notification-menu .notification-actions button {
+  width: auto;
+  padding: 2px 10px;
+  background: var(--bb-cream);
+}

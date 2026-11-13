@@ -75,11 +75,13 @@ function GameList() {
     return <ListMessage>{error}</ListMessage>;
   }
 
+  const visibleGames = games.filter((game) => game.is_available);
+
   return (
     <>
       {message && <ListMessage>{message}</ListMessage>}
 
-      {games.length === 0 ? (
+      {visibleGames.length === 0 ? (
         <ListMessage>No games yet</ListMessage>
       ) : (
         <GameRows>
