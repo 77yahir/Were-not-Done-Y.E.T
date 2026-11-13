@@ -4,7 +4,7 @@ def get_notifications(access_token: str):
     client = get_user_supabase_client(access_token)
     result = (
         client.table("notifications")
-        .select("notification_id, type, message, is_read, created_at, sender_id")
+        .select("notification_id, type, message, is_read, created_at, sender_id, related_borrowing_id")
         .order("created_at", desc=True)
         .execute()
     )

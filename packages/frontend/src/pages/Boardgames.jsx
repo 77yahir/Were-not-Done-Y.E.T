@@ -3,9 +3,10 @@ import AddGame from "../components/games/AddGame";
 import GameList from "../components/games/GameList";
 import ListMessage from "../components/games/ListMessage";
 import BorrowedList from "../components/library/BorrowedList";
+import LentOutList from "../components/library/LentOutList";
 
 // Columns from the Figma "Library" page that aren't built yet
-const UPCOMING_COLUMNS = ["Lent Out", "Requested"];
+const UPCOMING_COLUMNS = ["Lent Out"];
 
 // The navbar and the page's padding take 100px, so a column is at
 // most the rest of the screen and a long list scrolls inside it.
@@ -31,7 +32,15 @@ function Boardgames() {
       </LibraryColumn>
 
       <LibraryColumn title="Borrowing">
-        <BorrowedList />
+        <BorrowedList statuses={["active", "overdue"]} />
+      </LibraryColumn>
+
+      <LibraryColumn title="Pending">
+        <BorrowedList statuses={["pending"]}/>
+      </LibraryColumn>
+
+      <LibraryColumn title="Lent Out">
+        <LentOutList onChange={() => setListKey((key) => key + 1)}/>
       </LibraryColumn>
 
       {UPCOMING_COLUMNS.map((title) => (
