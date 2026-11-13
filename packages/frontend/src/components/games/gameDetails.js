@@ -15,10 +15,6 @@ export const CONDITIONS = [
   { value: "poor", label: "Poor" }
 ];
 
-// Tailwind classes for the inputs in these forms
-export const GAME_FIELD_CLASS =
-  "min-h-[43px] w-full px-[7px] py-0 text-[20px]";
-
 export const EMPTY_GAME_DETAILS = {
   title: "",
   minPlayers: "",

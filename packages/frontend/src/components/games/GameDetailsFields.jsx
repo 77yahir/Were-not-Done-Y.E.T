@@ -1,6 +1,6 @@
+import { fieldClass } from "../ui/styles";
 import GameSearch from "./GameSearch";
 import {
-  GAME_FIELD_CLASS,
   MAX_AVG_PLAYING_TIME,
   MAX_DESCRIPTION_LENGTH,
   MAX_GENRE_LENGTH,
@@ -23,31 +23,35 @@ function GameDetailsFields({ form, onChange, onAutofill }) {
         placeholder="Title"
         aria-label="Title"
         maxLength={MAX_TITLE_LENGTH}
-        className={GAME_FIELD_CLASS}
+        className={fieldClass}
         required
       />
-      <input
-        name="minPlayers"
-        type="number"
-        min="1"
-        value={form.minPlayers}
-        onChange={onChange}
-        placeholder="Min players"
-        aria-label="Min players"
-        className={GAME_FIELD_CLASS}
-        required
-      />
-      <input
-        name="maxPlayers"
-        type="number"
-        min={form.minPlayers || 1}
-        value={form.maxPlayers}
-        onChange={onChange}
-        placeholder="Max players"
-        aria-label="Max players"
-        className={GAME_FIELD_CLASS}
-        required
-      />
+      {/* Side by side, since their placeholders are short enough
+          for half the width even on a phone */}
+      <div className="grid grid-cols-2 gap-3">
+        <input
+          name="minPlayers"
+          type="number"
+          min="1"
+          value={form.minPlayers}
+          onChange={onChange}
+          placeholder="Min players"
+          aria-label="Min players"
+          className={fieldClass}
+          required
+        />
+        <input
+          name="maxPlayers"
+          type="number"
+          min={form.minPlayers || 1}
+          value={form.maxPlayers}
+          onChange={onChange}
+          placeholder="Max players"
+          aria-label="Max players"
+          className={fieldClass}
+          required
+        />
+      </div>
       <input
         name="minAge"
         type="number"
@@ -57,7 +61,7 @@ function GameDetailsFields({ form, onChange, onAutofill }) {
         onChange={onChange}
         placeholder="Min age (optional)"
         aria-label="Min age"
-        className={GAME_FIELD_CLASS}
+        className={fieldClass}
       />
       <input
         name="avgPlayingTime"
@@ -68,7 +72,7 @@ function GameDetailsFields({ form, onChange, onAutofill }) {
         onChange={onChange}
         placeholder="Avg minutes (optional)"
         aria-label="Average playing time in minutes"
-        className={GAME_FIELD_CLASS}
+        className={fieldClass}
       />
       <input
         name="genre"
@@ -78,7 +82,7 @@ function GameDetailsFields({ form, onChange, onAutofill }) {
         placeholder="Genre"
         aria-label="Genre"
         maxLength={MAX_GENRE_LENGTH}
-        className={GAME_FIELD_CLASS}
+        className={fieldClass}
         required
       />
       <textarea
@@ -89,7 +93,7 @@ function GameDetailsFields({ form, onChange, onAutofill }) {
         aria-label="Description"
         maxLength={MAX_DESCRIPTION_LENGTH}
         rows={3}
-        className={`${GAME_FIELD_CLASS} resize-y pt-1`}
+        className={`${fieldClass} resize-y`}
         required
       />
       <input
@@ -100,7 +104,7 @@ function GameDetailsFields({ form, onChange, onAutofill }) {
         placeholder="Image URL (optional)"
         aria-label="Image URL"
         maxLength={MAX_IMAGE_URL_LENGTH}
-        className={GAME_FIELD_CLASS}
+        className={fieldClass}
       />
     </>
   );

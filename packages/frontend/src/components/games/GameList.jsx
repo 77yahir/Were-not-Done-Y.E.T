@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  getGames,
-  removeGame
-} from "../../services/games.js";
+import { getGames, removeGame } from "../../services/games.js";
+import { IconMeeple } from "../ui/icons.jsx";
+import Notice from "../ui/Notice.jsx";
 import GameCard from "./GameCard.jsx";
 import GameDetailsModal from "./GameDetailsModal.jsx";
-import GameRows from "./GameRows.jsx";
+import GameGrid from "./GameGrid.jsx";
 import ListMessage from "./ListMessage.jsx";
 
 function GameList() {
@@ -25,8 +24,7 @@ function GameList() {
 
       setGames((current) =>
         current.filter(
-          (game) =>
-            game.library_item_id !== libraryItemId
+          (game) => game.library_item_id !== libraryItemId
         )
       );
 
@@ -72,19 +70,32 @@ function GameList() {
   }
 
   if (error) {
-    return <ListMessage>{error}</ListMessage>;
+    return <ListMessage tone="error">{error}</ListMessage>;
   }
 
-  const visibleGames = games.filter((game) => game.is_available);
+  const visibleGames = games.filter(
+    (game) => game.is_available
+  );
 
   return (
     <>
-      {message && <ListMessage>{message}</ListMessage>}
+      {message && (
+        <Notice
+          tone={
+            message === "Failed to remove game"
+              ? "error"
+              : "success"
+          }>
+          {message}
+        </Notice>
+      )}
 
-      {visibleGames.length === 0 ? (
-        <ListMessage>No games yet</ListMessage>
+      {games.length === 0 ? (
+        <ListMessage icon={<IconMeeple className="size-8" />}>
+          No games yet
+        </ListMessage>
       ) : (
-        <GameRows>
+        <GameGrid>
           {games.map((game) => (
             <GameCard
               key={game.library_item_id}
@@ -94,7 +105,7 @@ function GameList() {
               isRemoving={removingId === game.library_item_id}
             />
           ))}
-        </GameRows>
+        </GameGrid>
       )}
 
       {openGame && (

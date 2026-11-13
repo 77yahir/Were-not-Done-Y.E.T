@@ -5,49 +5,82 @@ import ListMessage from "../components/games/ListMessage";
 import BorrowedList from "../components/library/BorrowedList";
 import LentOutList from "../components/library/LentOutList";
 
-// Columns from the Figma "Library" page that aren't built yet
-const UPCOMING_COLUMNS = ["Lent Out"];
+import {
+  IconClock,
+  IconDice,
+  IconInbox,
+  IconLibrary,
+  IconSwap
+} from "../components/ui/icons";
 
-// The navbar and the page's padding take 100px, so a column is at
-// most the rest of the screen and a long list scrolls inside it.
-// On wide screens it's always that tall, reaching the bottom
-function LibraryColumn({ title, children }) {
-  return (
-    <section className="flex max-h-[calc(100vh-100px)] min-h-60 flex-col gap-[7px] bg-bb-cream px-[17px] pt-[7px] pb-6 min-[1001px]:min-h-[calc(100vh-100px)]">
-      <h2 className="text-center text-[20px]">{title}</h2>
-      {children}
-    </section>
-  );
-}
+import Notice from "../components/ui/Notice";
+import PageHeader from "../components/ui/PageHeader";
+import Panel from "../components/ui/Panel";
 
 function Boardgames() {
-  // Remount the list after a game is added so it reloads
   const [listKey, setListKey] = useState(0);
+  const [gameAdded, setGameAdded] = useState(false);
+
+  function handleGameAdded() {
+    setGameAdded(true);
+    setListKey((key) => key + 1);
+  }
 
   return (
-    <div className="tailwind-page grid grid-cols-1 gap-6 min-[561px]:grid-cols-2 min-[1001px]:grid-cols-4">
-      <LibraryColumn title="My Collection">
-        <AddGame onGameAdded={() => setListKey((key) => key + 1)} />
-        <GameList key={listKey} />
-      </LibraryColumn>
+    <div className="lg:flex lg:h-[calc(100vh-7rem)] lg:min-h-[32rem] lg:flex-col">
+      <PageHeader
+        title="Library"
+        subtitle="Keep track of the games you own and borrow."
+        icon={<IconLibrary className="size-8" />}
+      />
 
-      <LibraryColumn title="Borrowing">
-        <BorrowedList statuses={["active", "overdue"]} />
-      </LibraryColumn>
+      <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        {/* My Collection */}
+        <Panel
+          title="My Collection"
+          icon={<IconDice className="size-5" />}
+          action={
+            <AddGame
+              onOpen={() => setGameAdded(false)}
+              onGameAdded={handleGameAdded}
+            />
+          }
+          className="flex flex-col lg:min-h-0"
+          bodyClassName="flex flex-col gap-3 lg:min-h-0 lg:flex-1">
+          {gameAdded && (
+            <Notice tone="success">Game added!</Notice>
+          )}
 
-      <LibraryColumn title="Pending">
-        <BorrowedList statuses={["pending"]}/>
-      </LibraryColumn>
+          <GameList key={listKey} />
+        </Panel>
 
-      <LibraryColumn title="Lent Out">
-        <LentOutList onChange={() => setListKey((key) => key + 1)}/>
-      </LibraryColumn>
+        {/* Borrowing and loan management */}
+        <div className="flex flex-col gap-5 lg:min-h-0">
+          <Panel
+            title="Borrowing"
+            icon={<IconSwap className="size-5" />}
+            className="flex flex-col lg:min-h-0"
+            bodyClassName="flex flex-col lg:min-h-0">
+            <BorrowedList statuses={["active", "overdue"]} />
+          </Panel>
 
-      {UPCOMING_COLUMNS.map((title) => (
-        <LibraryColumn key={title} title={title}>
-          <ListMessage>Nothing here yet</ListMessage>
-        </LibraryColumn>
-      ))}
+          <Panel
+            title="Pending"
+            icon={<IconInbox className="size-5" />}
+            className="shrink-0">
+            <BorrowedList statuses={["pending"]} />
+          </Panel>
+
+          <Panel
+            title="Lent Out"
+            icon={<IconClock className="size-5" />}
+            className="shrink-0">
+            <LentOutList
+              onChange={() => setListKey((key) => key + 1)}
+            />
+          </Panel>
+        </div>
+      </div>
     </div>
   );
 }

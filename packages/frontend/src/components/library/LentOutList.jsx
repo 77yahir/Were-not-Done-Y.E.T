@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getMyLending } from "../../services/borrowing";
-import { gameSummary } from "../games/gameDetails"
+import { gameSummary } from "../games/gameDetails";
 import GameDetailsModal from "../games/GameDetailsModal";
 import GameRow from "../games/GameRow";
 import GameRows from "../games/GameRows";
@@ -38,7 +38,8 @@ function LentOutList() {
 
   if (loading) return <ListMessage>Loading...</ListMessage>;
   if (error) return <ListMessage>{error}</ListMessage>;
-  if (lentOut.length === 0) return <ListMessage>Nothing here yet</ListMessage>;
+  if (lentOut.length === 0)
+    return <ListMessage>Nothing here yet</ListMessage>;
 
   return (
     <>
@@ -55,7 +56,10 @@ function LentOutList() {
       </GameRows>
 
       {openGame && (
-        <GameDetailsModal game={openGame} onClose={() => setOpenGame(null)} />
+        <GameDetailsModal
+          game={openGame}
+          onClose={() => setOpenGame(null)}
+        />
       )}
     </>
   );

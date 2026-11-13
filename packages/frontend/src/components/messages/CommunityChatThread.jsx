@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { Link } from "react-router-dom";
 import { usePolledData } from "../../hooks/usePolledData";
 import {
   getCommunityMessages,
@@ -7,6 +6,7 @@ import {
 } from "../../services/messages";
 import MessageForm from "./MessageForm";
 import MessageLog from "./MessageLog";
+import ThreadHeader from "./ThreadHeader";
 
 // How often an open chat checks for new messages
 const POLL_MS = 5000;
@@ -33,14 +33,8 @@ function CommunityChatThread({ chat, onChange }) {
   return (
     <section
       aria-label={`${name} group chat`}
-      className="flex h-[calc(100vh-20rem)] min-h-96 flex-col gap-2 md:h-[calc(100vh-12rem)]">
-      <div className="flex items-center gap-3">
-        <Link to="/messages" className="text-bb-text md:hidden">
-          Back
-        </Link>
-
-        <h2 className="truncate text-xl">{name}</h2>
-      </div>
+      className="flex min-h-0 flex-1 flex-col gap-3">
+      <ThreadHeader name={name} />
 
       <MessageLog
         data={data}

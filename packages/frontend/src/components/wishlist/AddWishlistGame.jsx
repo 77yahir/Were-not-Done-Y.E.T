@@ -4,16 +4,18 @@ import Modal from "../ui/Modal";
 import AddGameButton from "../games/AddGameButton";
 import GameDetailsFields from "../games/GameDetailsFields";
 import GameForm from "../games/GameForm";
-import ListMessage from "../games/ListMessage";
 import {
   EMPTY_GAME_DETAILS,
   validateGameDetails
 } from "../games/gameDetails";
 
-function AddWishlistGame({ onGameAdded }) {
+// The Wishlist's Add Game button and its pop-up. The page shows the
+// "Added to your wishlist!" message by the list: onOpen tells it the
+// form opened, so an old message can go, and onGameAdded that a game
+// was added
+function AddWishlistGame({ onOpen, onGameAdded }) {
   const [form, setForm] = useState(EMPTY_GAME_DETAILS);
   const [showForm, setShowForm] = useState(false);
-  const [message, setMessage] = useState("");
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +29,7 @@ function AddWishlistGame({ onGameAdded }) {
   }
 
   function openForm() {
-    setMessage("");
+    onOpen?.();
     setShowForm(true);
   }
 
@@ -51,7 +53,6 @@ function AddWishlistGame({ onGameAdded }) {
 
     try {
       await addToWishlist(details);
-      setMessage("Added to your wishlist!");
       closeForm();
       onGameAdded?.();
     } catch (error) {
@@ -70,8 +71,6 @@ function AddWishlistGame({ onGameAdded }) {
   return (
     <>
       <AddGameButton onClick={openForm} />
-
-      {message && <ListMessage>{message}</ListMessage>}
 
       {showForm && (
         <Modal title="Wishlist" onClose={closeForm}>

@@ -1,5 +1,9 @@
+import Button from "../ui/Button";
+
 // The form inside the Add Game and Wishlist pop-ups.
-// Its inputs go in as children, above the submit button
+// Its inputs go in as children, above the submit button. An error
+// shows just above the button, so it's in view after pressing it
+// even when the form is scrolled down on a phone
 function GameForm({
   error,
   loading,
@@ -8,22 +12,23 @@ function GameForm({
   children
 }) {
   return (
-    <>
-      {error && <p className="mt-0 mb-3 text-center">{error}</p>}
+    <form onSubmit={onSubmit} className="flex flex-col gap-3">
+      {children}
 
-      <form
-        onSubmit={onSubmit}
-        className="flex w-full flex-col items-center gap-4">
-        {children}
+      {error && (
+        <p className="rounded-lg bg-berry-100 px-3 py-2 text-center text-sm font-bold text-berry-700">
+          {error}
+        </p>
+      )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="h-[47px] w-[278px] max-w-full text-[30px]">
-          {loading ? "Adding..." : submitLabel}
-        </button>
-      </form>
-    </>
+      <Button
+        type="submit"
+        size="lg"
+        disabled={loading}
+        className="mt-1 w-full">
+        {loading ? "Adding..." : submitLabel}
+      </Button>
+    </form>
   );
 }
 

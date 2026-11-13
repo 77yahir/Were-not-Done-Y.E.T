@@ -14,8 +14,6 @@ import Wishlist from "./pages/Wishlist";
 import PageLayout from "./components/layout/PageLayout";
 import UserProfile from "./pages/UserProfile";
 
-import "./App.css";
-
 function App() {
   return (
     <BrowserRouter>

@@ -10,14 +10,16 @@ function conditionLabel(value) {
   return condition ? condition.label : value;
 }
 
+// One row of the details list: the label on the left, the value on
+// the right
 function Detail({ label, children }) {
   return (
-    <>
-      <dt>{label}</dt>
-      <dd className="m-0 text-right wrap-anywhere">
+    <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+      <dt className="shrink-0 text-ink-700">{label}</dt>
+      <dd className="min-w-0 text-right font-bold wrap-anywhere">
         {children}
       </dd>
-    </>
+    </div>
   );
 }
 
@@ -27,7 +29,7 @@ function GameDetailsModal({ game, onClose }) {
   const titleRef = useRef(null);
 
   // Keyboard and screen reader users start on the game's name,
-  // and go back to its row when the pop-up closes
+  // and go back to its card when the pop-up closes
   useEffect(() => {
     const openedFrom = document.activeElement;
     titleRef.current.focus({ preventScroll: true });
@@ -42,24 +44,24 @@ function GameDetailsModal({ game, onClose }) {
 
   return (
     <Modal title="Details" onClose={onClose}>
-      <div className="flex w-full flex-col gap-4 text-[16px]">
+      <div className="flex flex-col gap-4">
         {game.image_url && (
           <img
             src={game.image_url}
             alt={`Picture of ${game.title}`}
             onError={hideImage}
-            className="h-[220px] w-full object-contain"
+            className="h-56 w-full rounded-xl border border-parchment-300 bg-parchment-200 object-contain p-2"
           />
         )}
 
         <h3
           ref={titleRef}
           tabIndex={-1}
-          className="text-center text-[28px] wrap-anywhere outline-none">
+          className="text-center text-3xl leading-tight font-extrabold wrap-anywhere outline-none">
           {game.title}
         </h3>
 
-        <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+        <dl className="divide-y divide-parchment-300 rounded-xl border border-parchment-300 bg-parchment-50/70 text-sm">
           <Detail label="Players">{players}</Detail>
           <Detail label="Genre">{game.genre}</Detail>
           {game.min_age && (
@@ -77,7 +79,7 @@ function GameDetailsModal({ game, onClose }) {
           )}
         </dl>
 
-        <p className="m-0 whitespace-pre-line wrap-anywhere">
+        <p className="leading-relaxed whitespace-pre-line wrap-anywhere">
           {game.description}
         </p>
       </div>

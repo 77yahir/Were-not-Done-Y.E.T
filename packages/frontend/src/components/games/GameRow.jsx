@@ -20,7 +20,9 @@ function GameRow({
       <div className="flex min-h-[46px] items-center justify-center bg-bb-brown px-10 py-1 text-center text-[20px]">
         {title}
         {summary && (
-          <span className="block text-[13px] leading-4">{summary}</span>
+          <span className="block text-[13px] leading-4">
+            {summary}
+          </span>
         )}
         {children}
       </div>

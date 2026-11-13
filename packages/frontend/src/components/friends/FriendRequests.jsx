@@ -4,6 +4,21 @@ import {
   respondToFriendRequest
 } from "../../services/friends";
 import { Link } from "react-router-dom";
+import Avatar from "../ui/Avatar";
+import Button from "../ui/Button";
+import Notice from "../ui/Notice";
+import Panel from "../ui/Panel";
+import Pill from "../ui/Pill";
+import {
+  IconCheck,
+  IconClock,
+  IconInbox,
+  IconX
+} from "../ui/icons";
+
+// A name that links to that user's profile
+const NAME_LINK_CLASS =
+  "rounded-sm font-bold text-ink-900 underline-offset-2 hover:text-forest-700 hover:underline";
 
 export function FriendRequests({
   refreshVersion = 0,
@@ -94,75 +109,133 @@ export function FriendRequests({
   );
 
   return (
-    <section>
-      <h2>Friend Requests</h2>
-
-      {loading && <p>Loading friend requests...</p>}
-      {error && <p role="alert">{error}</p>}
-      {reviewError && <p role="alert">{reviewError}</p>}
+    <Panel
+      title="Friend Requests"
+      icon={<IconInbox className="size-5" />}
+      bodyClassName="flex flex-col gap-5">
+      {loading && <Notice>Loading friend requests...</Notice>}
+      {error && (
+        <Notice tone="error" role="alert">
+          {error}
+        </Notice>
+      )}
+      {reviewError && (
+        <Notice tone="error" role="alert">
+          {reviewError}
+        </Notice>
+      )}
 
       {!loading && !error && (
         <>
-          <h3>Received Requests</h3>
+          <div>
+            <h3 className="text-lg font-bold text-ink-700">
+              Received Requests
+            </h3>
 
-          {incoming.length === 0 && (
-            <p>No pending received requests</p>
-          )}
+            {incoming.length === 0 && (
+              <Notice className="mt-1">
+                No pending received requests
+              </Notice>
+            )}
 
-          {incoming.map((request) => (
-            <div key={request.friendship_id}>
-              <p>
-                From:{" "}
-                <Link to={`/users/${request.other_user_id}`}>
-                  {request.username}
-                </Link>
-              </p>
+            {/* The list is a container, so each request fits on
+                one line when the list is wide enough, and puts
+                its buttons under the name when it isn't */}
+            {incoming.length > 0 && (
+              <ul className="@container mt-1 divide-y divide-parchment-300">
+                {incoming.map((request) => (
+                  <li
+                    key={request.friendship_id}
+                    className="flex items-start gap-3 py-3 @sm:items-center">
+                    <Avatar name={request.username} />
 
-              <button
-                type="button"
-                disabled={processingId !== null}
-                onClick={() =>
-                  handleReview(
-                    request.friendship_id,
-                    "accepted"
-                  )
-                }>
-                Accept
-              </button>
+                    <div className="flex min-w-0 flex-1 flex-col gap-2 @sm:flex-row @sm:items-center @sm:justify-between">
+                      <p className="wrap-anywhere text-ink-700">
+                        From:{" "}
+                        <Link
+                          to={`/users/${request.other_user_id}`}
+                          className={NAME_LINK_CLASS}>
+                          {request.username}
+                        </Link>
+                      </p>
 
-              <button
-                type="button"
-                disabled={processingId !== null}
-                onClick={() =>
-                  handleReview(
-                    request.friendship_id,
-                    "declined"
-                  )
-                }>
-                Decline
-              </button>
-            </div>
-          ))}
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          size="sm"
+                          disabled={processingId !== null}
+                          onClick={() =>
+                            handleReview(
+                              request.friendship_id,
+                              "accepted"
+                            )
+                          }>
+                          <IconCheck className="size-4" />
+                          Accept
+                        </Button>
 
-          <h3>Sent Requests</h3>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          disabled={processingId !== null}
+                          onClick={() =>
+                            handleReview(
+                              request.friendship_id,
+                              "declined"
+                            )
+                          }>
+                          <IconX className="size-4" />
+                          Decline
+                        </Button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
-          {outgoing.length === 0 && (
-            <p>No pending sent requests</p>
-          )}
+          <div>
+            <h3 className="text-lg font-bold text-ink-700">
+              Sent Requests
+            </h3>
 
-          {outgoing.map((request) => (
-            <div key={request.friendship_id}>
-              <p>
-                To:{" "}
-                <Link to={`/users/${request.other_user_id}`}>
-                  {request.username}
-                </Link>
-              </p>
-              <p>Status: Pending</p>
-            </div>
-          ))}
+            {outgoing.length === 0 && (
+              <Notice className="mt-1">
+                No pending sent requests
+              </Notice>
+            )}
+
+            {outgoing.length > 0 && (
+              <ul className="mt-1 divide-y divide-parchment-300">
+                {outgoing.map((request) => (
+                  <li
+                    key={request.friendship_id}
+                    className="flex items-center gap-3 py-3">
+                    <Avatar name={request.username} />
+
+                    <p className="min-w-0 flex-1 wrap-anywhere text-ink-700">
+                      To:{" "}
+                      <Link
+                        to={`/users/${request.other_user_id}`}
+                        className={NAME_LINK_CLASS}>
+                        {request.username}
+                      </Link>
+                    </p>
+
+                    <p className="shrink-0">
+                      <span className="sr-only">Status: </span>
+                      <Pill tone="blue">
+                        <IconClock className="size-3.5" />
+                        Pending
+                      </Pill>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </>
       )}
-    </section>
+    </Panel>
   );
 }

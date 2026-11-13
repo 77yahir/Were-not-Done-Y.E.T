@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { createCommunity } from "../../services/communities";
+import Button from "../ui/Button";
+import Notice from "../ui/Notice";
+import Panel from "../ui/Panel";
+import { IconPlus } from "../ui/icons";
+import { fieldClass } from "../ui/styles";
 
 function AddCommunity() {
   const [name, setName] = useState("");
@@ -25,27 +30,46 @@ function AddCommunity() {
   }
 
   return (
-    <div>
-      {message && <p>{message}</p>}
-      <h2>Create A Community</h2>
-
-      <form onSubmit={handleSubmit}>
+    <Panel
+      title="Create A Community"
+      icon={<IconPlus className="size-5" />}>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-3">
         <input
+          className={fieldClass}
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Community Name"
           required
         />
         <textarea
+          className={fieldClass}
+          rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
         />
-        <button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full">
           {loading ? "Creating..." : "Add Community"}
-        </button>
+        </Button>
       </form>
-    </div>
+
+      {message && (
+        <Notice
+          tone={
+            message === "Community created successfully!"
+              ? "success"
+              : "error"
+          }
+          className="mt-3">
+          {message}
+        </Notice>
+      )}
+    </Panel>
   );
 }
 

@@ -1,20 +1,14 @@
-import plusIcon from "../../assets/icons/plus.svg";
+import Button from "../ui/Button";
+import { IconPlus } from "../ui/icons";
 
+// The green button in the Library and Wishlist panels that opens the
+// Add Game pop-up
 function AddGameButton({ onClick }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex min-h-[46px] w-full items-center justify-center gap-3 text-[20px]">
-      <img
-        src={plusIcon}
-        alt=""
-        width="22"
-        height="22"
-        className="size-[22px]"
-      />
+    <Button onClick={onClick}>
+      <IconPlus className="size-5" />
       Add Game
-    </button>
+    </Button>
   );
 }
 

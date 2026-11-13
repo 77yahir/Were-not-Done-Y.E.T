@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import ChatCard from "./ChatCard";
 
 function getPreview(chat) {
   if (!chat.last_message) {
@@ -10,19 +10,11 @@ function getPreview(chat) {
 
 function CommunityChatCard({ chat }) {
   return (
-    <NavLink
+    <ChatCard
       to={`/messages/communities/${chat.group_id}`}
-      className={({ isActive }) =>
-        `block p-2 text-bb-text no-underline hover:bg-bb-brown-dark ${
-          isActive ? "bg-bb-brown-dark" : "bg-bb-brown"
-        }`
-      }>
-      <span className="block truncate">{chat.name}</span>
-
-      <span className="block truncate text-xs">
-        {getPreview(chat)}
-      </span>
-    </NavLink>
+      name={chat.name}
+      preview={getPreview(chat)}
+    />
   );
 }
 
