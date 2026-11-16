@@ -73,3 +73,9 @@ export async function requestToJoinCommunity(groupId) {
     headers: {}
   });
 }
+
+export async function getCommunityDetails(groupId) {
+  return apiFetch(`/communities/${groupId}`, {
+    method: "GET"
+  });
+}
