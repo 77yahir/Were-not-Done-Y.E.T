@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 
 // Loads data now, then again on a timer while the tab is visible.
 // Only the newest request can update state, so a slow response

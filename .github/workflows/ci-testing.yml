@@ -1,0 +1,60 @@
+# On every push to main, and every pull request into main, GitHub
+# installs everything from scratch, checks code style, builds the
+# frontend and runs all the tests
+name: CI Testing
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Vitest and jsdom need Node 22.12 or newer
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            packages/frontend/package-lock.json
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: packages/backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm ci --prefix packages/frontend
+          pip install -r packages/backend/requirements.txt
+
+      - name: Check code style
+        run: npm run lint
+
+      - name: Build the frontend
+        run: npm run build
+
+      # Most backend tests need a local Supabase, never the team's shared
+      # one. This starts a fresh one here from supabase/migrations
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 3.2.0
+
+      - name: Start a local Supabase for the tests
+        run: |
+          supabase start -x realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+          eval "$(supabase status -o env)"
+          echo "SUPABASE_TEST_URL=$API_URL" >> "$GITHUB_ENV"
+          echo "SUPABASE_TEST_ANON_KEY=$ANON_KEY" >> "$GITHUB_ENV"
+          echo "SUPABASE_TEST_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY" >> "$GITHUB_ENV"
+
+      - name: Run the tests
+        run: npm test

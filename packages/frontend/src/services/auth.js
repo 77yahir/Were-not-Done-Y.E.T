@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
+import { apiUrl } from "./api";
 
 export async function signUp(username, email, password) {
   const { data, error } = await supabase.auth.signUp({
@@ -20,7 +21,7 @@ export async function signUp(username, email, password) {
 }
 
 export async function logIn(email, password) {
-  const response = await fetch("/api/users/signin", {
+  const response = await fetch(apiUrl("/users/signin"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

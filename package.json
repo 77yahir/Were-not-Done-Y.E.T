@@ -5,6 +5,7 @@
     "start:frontend": "npm --prefix packages/frontend run dev",
     "start:backend": "python -m uvicorn app.main:app --app-dir packages/backend --reload --reload-dir packages/backend",
     "build": "npm --prefix packages/frontend run build",
+    "lint": "npm --prefix packages/frontend run lint && prettier --check .",
     "test": "npm run test:frontend && npm run test:backend",
     "test:frontend": "npm --prefix packages/frontend test",
     "test:backend": "cd packages/backend && python -m pytest tests -v",
