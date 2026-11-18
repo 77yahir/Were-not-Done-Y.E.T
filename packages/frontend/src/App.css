@@ -252,17 +252,35 @@
   margin-left: 0;
 }
 
-.notification-bell-button { position: relative; width: 45px; justify-content: center; }
-
-.notification-badge {
-  position: absolute; top: -4px; right: -4px;
-  min-width: 16px; padding: 0 4px; border-radius: 8px;
-  background: var(--bb-brown-dark); color: var(--bb-text); font-size: 11px;
+.notification-bell-button {
+  position: relative;
+  width: 45px;
+  justify-content: center;
 }
 
-.notification-menu { width: 280px; max-height: 320px; overflow-y: auto; }
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--bb-brown-dark);
+  color: var(--bb-text);
+  font-size: 11px;
+}
 
-.notification-menu ul { list-style: none; margin: 0; padding: 0; }
+.notification-menu {
+  width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.notification-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
 .notification-menu li button {
   width: 100%;
