@@ -15,7 +15,7 @@ RETURNS TABLE (
     description text,
     condition text,
     is_available boolean
-)z
+)
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''

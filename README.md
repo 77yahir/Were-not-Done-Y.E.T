@@ -107,17 +107,3 @@ The health checks should return:
 ```json
 { "status": "ok" }
 ```
-
-To run backend tests:
-
-```bash
-cd packages/backend
-python -m pytest
-```
-
-## Git Workflow
-
-Create a separate branch for your work, push your changes, and
-open a Pull Request before merging into `main`
-
-Make sure your changes work before submitting a PR
