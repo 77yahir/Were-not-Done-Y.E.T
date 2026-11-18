@@ -31,6 +31,26 @@ def anonymous_client(test_config):
     return create_client(url, anon_key)
 
 @pytest.fixture
+def api(test_config, monkeypatch):
+    """The real FastAPI app, connected to the local test database.
+
+    Nothing is mocked: a request goes through the router, the login
+    check and the service to Supabase, as it does in the running app.
+    """
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    url, anon_key, _ = test_config
+
+    # The app reads these on every request. The .env file points them at
+    # the shared database, so they're replaced for the test
+    monkeypatch.setenv("SUPABASE_URL", url)
+    monkeypatch.setenv("SUPABASE_KEY", anon_key)
+
+    return TestClient(app)
+
+@pytest.fixture
 def test_users(test_config):
     url, anon_key, service_key = test_config
 
