@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { getSession } from "../services/auth";
+import {
+  getSession,
+  updatePassword,
+  updateEmail
+} from "../services/auth";
 import {
   getUserProfile,
   updateMyUsername
@@ -21,6 +25,18 @@ export default function Settings() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const { setDisplayName } = useOutletContext();
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+
+  const [newEmail, setNewEmail] = useState("");
+  const [emailSaving, setEmailSaving] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [emailMessage, setEmailMessage] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -97,6 +113,84 @@ export default function Settings() {
     }
   }
 
+  async function handlePasswordChange(event) {
+    event.preventDefault();
+
+    setPasswordError("");
+    setPasswordMessage("");
+
+    if (newPassword.length < 6) {
+      setPasswordError(
+        "Password must be at least 6 characters"
+      );
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      setPasswordError("New password must be different");
+      return;
+    }
+
+    setPasswordSaving(true);
+
+    try {
+      await updatePassword(currentPassword, newPassword);
+
+      setPasswordMessage("Password updated successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      console.error("Password update failed:", error);
+      setPasswordError(
+        "Could not update password. Check your current password and try again"
+      );
+    } finally {
+      setPasswordSaving(false);
+    }
+  }
+
+  async function handleEmailChange(event) {
+    event.preventDefault();
+
+    const requestedEmail = newEmail.trim();
+
+    setEmailError("");
+    setEmailMessage("");
+
+    if (
+      !requestedEmail ||
+      requestedEmail.toLowerCase() === email.toLowerCase()
+    ) {
+      setEmailError("Enter a different email address");
+      return;
+    }
+
+    setEmailSaving(true);
+
+    try {
+      await updateEmail(requestedEmail);
+
+      setEmailMessage(
+        "Email change requested. Check your current and new email inboxes to confirm the change"
+      );
+
+      setNewEmail("");
+    } catch (error) {
+      console.error("Email update failed:", error);
+      setEmailError(
+        "Could not request email change. Please check the address and try again"
+      );
+    } finally {
+      setEmailSaving(false);
+    }
+  }
+
   return (
     <div>
       <PageHeader
@@ -168,6 +262,131 @@ export default function Settings() {
             </form>
           </div>
         )}
+      </Panel>
+
+      <Panel title="Security">
+        <form
+          onSubmit={handlePasswordChange}
+          className="flex max-w-md flex-col gap-4">
+          {passwordError && (
+            <Notice tone="error">{passwordError}</Notice>
+          )}
+
+          {passwordMessage && (
+            <Notice tone="success">{passwordMessage}</Notice>
+          )}
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="current-password">
+              Current Password
+            </label>
+            <input
+              id="current-password"
+              type="password"
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(event) =>
+                setCurrentPassword(event.target.value)
+              }
+              required
+              disabled={passwordSaving}
+              className="rounded-lg border border-parchment-400 bg-parchment-50 px-3 py-2 text-ink-900"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="new-password">New Password</label>
+            <input
+              id="new-password"
+              type="password"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(event) =>
+                setNewPassword(event.target.value)
+              }
+              minLength={6}
+              required
+              disabled={passwordSaving}
+              className="rounded-lg border border-parchment-400 bg-parchment-50 px-3 py-2 text-ink-900"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="confirm-password">
+              Confirm New Password
+            </label>
+            <input
+              id="confirm-password"
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(event) =>
+                setConfirmPassword(event.target.value)
+              }
+              minLength={6}
+              required
+              disabled={passwordSaving}
+              className="rounded-lg border border-parchment-400 bg-parchment-50 px-3 py-2 text-ink-900"
+            />
+          </div>
+
+          <div>
+            <Button type="submit" disabled={passwordSaving}>
+              {passwordSaving
+                ? "Updating..."
+                : "Change Password"}
+            </Button>
+          </div>
+        </form>
+      </Panel>
+
+      <Panel title="Email Settings">
+        <form
+          onSubmit={handleEmailChange}
+          className="flex max-w-md flex-col gap-4">
+          {emailError && (
+            <Notice tone="error">{emailError}</Notice>
+          )}
+
+          {emailMessage && (
+            <Notice tone="success">{emailMessage}</Notice>
+          )}
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="current-email">Current Email</label>
+
+            <input
+              id="current-email"
+              type="email"
+              value={email}
+              readOnly
+              className="rounded-lg border border-parchment-400 bg-parchment-100 px-3 py-2 text-ink-700"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="new-email">New Email</label>
+
+            <input
+              id="new-email"
+              type="email"
+              value={newEmail}
+              onChange={(event) =>
+                setNewEmail(event.target.value)
+              }
+              required
+              disabled={emailSaving}
+              autoComplete="email"
+              className="rounded-lg border border-parchment-400 bg-parchment-50 px-3 py-2 text-ink-900"
+            />
+          </div>
+
+          <div>
+            <Button type="submit" disabled={emailSaving}>
+              {emailSaving ? "Sending..." : "Change Email"}
+            </Button>
+          </div>
+        </form>
       </Panel>
     </div>
   );
