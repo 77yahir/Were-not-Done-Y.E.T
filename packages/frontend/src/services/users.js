@@ -11,3 +11,13 @@ export async function getUserLibrary(userId) {
     method: "GET"
   });
 }
+
+export async function updateMyUsername(username) {
+  return apiFetch("/users/me", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ username })
+  });
+}

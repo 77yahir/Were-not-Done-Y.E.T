@@ -13,6 +13,7 @@ import Messages from "./pages/Messages";
 import Wishlist from "./pages/Wishlist";
 import PageLayout from "./components/layout/PageLayout";
 import UserProfile from "./pages/UserProfile";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/collection" element={<Boardgames />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/friends" element={<Friends />} />
+          <Route path="/settings" element={<Settings />} />
           <Route
             path="/communities"
             element={<Communities />}
