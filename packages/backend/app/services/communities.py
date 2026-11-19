@@ -123,3 +123,21 @@ def request_to_join_community(
     ).execute()
     
     return response.data
+
+def get_community_details(
+    group_id: str,
+    access_token: str
+):
+    client = get_user_supabase_client(access_token)
+    
+    response = (
+        client.table("community_groups")
+        .select(
+            "group_id, name, description, created_by_user_id"
+        )
+        .eq("group_id", group_id)
+        .maybe_single()
+        .execute()
+    )
+    
+    return response.data

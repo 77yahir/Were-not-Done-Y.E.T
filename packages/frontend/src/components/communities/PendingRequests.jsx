@@ -6,15 +6,12 @@ import {
 import Button from "../ui/Button";
 import Notice from "../ui/Notice";
 import Panel from "../ui/Panel";
-import {
-  IconCheck,
-  IconInbox,
-  IconUser,
-  IconX
-} from "../ui/icons";
+import { IconCheck, IconInbox, IconX } from "../ui/icons";
 import EmptyState from "./EmptyState";
+import { Link } from "react-router-dom";
+import Avatar from "../ui/Avatar";
 
-export function PendingRequests({ groupId }) {
+export function PendingRequests({ groupId, onMemberApproved }) {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,6 +44,10 @@ export function PendingRequests({ groupId }) {
           (request) => request.membership_id !== membershipId
         )
       );
+
+      if (decision === "approved") {
+        onMemberApproved?.();
+      }
     } catch (error) {
       if (reviewGeneration === generationRef.current) {
         setReviewError("Failed to review join request");
@@ -126,14 +127,16 @@ export function PendingRequests({ groupId }) {
               key={request.membership_id}
               className="flex flex-wrap items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50 p-3 shadow-sm shadow-black/10">
               <div className="flex min-w-0 flex-1 basis-56 items-center gap-3">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-parchment-200 text-wood-600 ring-1 ring-parchment-300">
-                  <IconUser className="size-5" />
-                </span>
+                <Avatar name={request.username} />
 
-                {/* The requester's account id */}
-                <p className="min-w-0 font-mono text-xs text-ink-500 wrap-anywhere">
-                  {request.user_id}
-                </p>
+                <Link
+                  to={`/users/${request.user_id}`}
+                  state={{
+                    from: `/communities/${groupId}`
+                  }}
+                  className="min-w-0 font-display text-lg leading-tight font-bold wrap-anywhere hover:underline">
+                  {request.username}
+                </Link>
               </div>
 
               <div className="ml-auto flex flex-wrap gap-2">

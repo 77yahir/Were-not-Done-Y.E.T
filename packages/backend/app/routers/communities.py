@@ -4,7 +4,7 @@ from uuid import UUID
 
 from app.core.auth import get_current_user
 from app.schemas.communities import CommunityCreate, JoinRequestReview
-from app.services.communities import create_community, review_join_request, get_pending_join_requests, get_my_community_permissions, remove_community_member, get_community_members, get_my_communities, get_discoverable_communities, request_to_join_community
+from app.services.communities import create_community, review_join_request, get_pending_join_requests, get_my_community_permissions, remove_community_member, get_community_members, get_my_communities, get_discoverable_communities, request_to_join_community, get_community_details
 from postgrest.exceptions import APIError
 
 router = APIRouter(prefix="/api/communities", tags=["Communities"])
@@ -203,7 +203,7 @@ def request_to_join_community_endpoint(
         )
         
         return {
-            "messsage": "Join request submitted successfully"
+            "message": "Join request submitted successfully"
         }
     except APIError as error:
         if error.message == "Membership already pending or approved":
@@ -220,6 +220,23 @@ def request_to_join_community_endpoint(
             
         raise
     
-
+@router.get("/{group_id}")
+def get_community_details_endpoint(
+    group_id: UUID,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    community = get_community_details(
+        group_id=str(group_id),
+        access_token=credentials.credentials
+    )
+    
+    if community is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Community not found"
+        )
+        
+    return {"community": community}
     
     
