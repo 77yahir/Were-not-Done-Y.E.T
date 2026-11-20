@@ -170,6 +170,15 @@ The tests need no seed data. Each test creates its own users and
 data, and the backend tests delete theirs when they finish. The
 UI tests need no servers or database
 
+### Unit tests
+
+| File (`packages/frontend/src/tests/`) | Feature                              | What it checks                                                                                                                                                                                                                                                      |
+| ------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `profileValidation.test.js`           | Username & Profile Avatar Validation | A username is valid if it is longer than 3 characters. If the username is shorter than 3 characters it is rejected. An avatar is valid if it is contained within the avatar library. If the avatar is not contained within the avatar library, then it is rejected. |
+
+To run only these tests:
+`cd packages/frontend npx vitest run src/tests/profileValidation.test.js`
+
 ### System tests
 
 System tests call the backend API the same way the frontend
