@@ -39,7 +39,7 @@ def mark_as_read(notification_id: str, access_token: str):
     if not result.data:
         raise ValueError("Notification not found")
 
-    return result.data[0]
+    return _require_found(result)
 
 def create_notification(
         recepient_id: str,
@@ -63,4 +63,21 @@ def create_notification(
         .execute()
     )
 
+    return result.data[0]
+
+def delete_notification(notification_id: str, access_token: str):
+    client = get_user_supabase_client(access_token)
+    result = (
+        client.table("notifications")
+        .delete()
+        .eq("notification_id", str(notification_id))
+        .execute()
+    )
+
+    _require_found(result)
+
+# helper
+def _require_found(result):
+    if not result.data:
+        raise ValueError("Notification not found")
     return result.data[0]
