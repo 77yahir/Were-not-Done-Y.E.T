@@ -12,6 +12,7 @@ import Panel from "../ui/Panel";
 import { IconUsers } from "../ui/icons";
 import EmptyState from "./EmptyState";
 import RolePill from "./RolePill";
+import { Link } from "react-router-dom";
 
 export function MemberList({
   groupId,
@@ -147,7 +148,11 @@ export function MemberList({
   // lg:flex-1 gives it all the room they leave
   return (
     <Panel
-      title="Community Members"
+      title={
+        loading
+          ? "Community Members"
+          : `Community Members (${members.length})`
+      }
       icon={<IconUsers className="size-5" />}
       className="min-w-0 lg:flex-1"
       bodyClassName="flex flex-col gap-3">
@@ -185,9 +190,14 @@ export function MemberList({
                   avatarId={member.avatar_id}
                 />
                 <div className="min-w-0">
-                  <p className="font-display text-lg leading-tight font-bold wrap-anywhere">
+                  <Link
+                    to={`/users/${member.user_id}`}
+                    state={{
+                      from: `/communities/${groupId}`
+                    }}
+                    className="font-display text-lg leading-tight front-bold wrap-anywhere hover:underline">
                     {member.username}
-                  </p>
+                  </Link>
                   <p className="mt-1">
                     <RolePill role={member.role} />
                   </p>

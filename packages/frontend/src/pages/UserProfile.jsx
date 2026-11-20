@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { getUserProfile } from "../services/users";
 import UserLibrary from "../components/users/UserLibrary";
 import Avatar from "../components/ui/Avatar";
@@ -18,6 +18,19 @@ export default function UserProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const location = useLocation();
+
+  const backTo = location.state?.from?.startsWith(
+    "/communities/"
+  )
+    ? location.state.from
+    : "/friends";
+
+  const backLabel =
+    backTo !== "/friends"
+      ? "Back to Community"
+      : "Back to Friends";
 
   useEffect(() => {
     let ignore = false;
@@ -57,12 +70,12 @@ export default function UserProfile() {
   return (
     <div>
       <ButtonLink
-        to="/friends"
+        to={backTo}
         variant="secondary"
         size="sm"
         className="mb-4">
         <IconArrowLeft className="size-4" />
-        Back to Friends
+        {backLabel}
       </ButtonLink>
 
       <PageHeader
