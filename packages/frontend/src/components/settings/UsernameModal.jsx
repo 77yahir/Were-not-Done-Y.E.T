@@ -3,6 +3,7 @@ import { updateMyUsername } from "../../services/users";
 import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 import Notice from "../ui/Notice";
+import { isValidUsername } from "../../utils/profileValidation";
 
 export default function UsernameModal({
   username,
@@ -25,7 +26,7 @@ export default function UsernameModal({
 
     const newUsername = value.trim();
 
-    if (newUsername.length < 3 || newUsername.length > 75) {
+    if (!isValidUsername(newUsername)) {
       setError("Username must be between 3 and 75 characters");
       return;
     }

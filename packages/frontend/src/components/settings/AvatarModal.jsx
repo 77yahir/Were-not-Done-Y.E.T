@@ -4,6 +4,7 @@ import Avatar from "../ui/Avatar";
 import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 import Notice from "../ui/Notice";
+import { isValidAvatar } from "../../utils/profileValidation";
 
 const AVATARS = [
   "meeple",
@@ -34,6 +35,11 @@ export default function AvatarModal({
 
   async function handleSave() {
     if (saving || selectedAvatar === (avatarId ?? null)) {
+      return;
+    }
+
+    if (!isValidAvatar(selectedAvatar)) {
+      setError("Invalid avatar selection");
       return;
     }
 
