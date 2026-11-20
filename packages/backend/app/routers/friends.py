@@ -27,11 +27,11 @@ def search_friends(
 @router.post("/requests")
 def add_friend(
     data: FriendRequestCreate,
-    user= Depends(get_current_user),
+    user=Depends(get_current_user),
     credentials: HTTPAuthorizationCredentials = Depends(bearer)
 ):
     try:
-        friendships = send_friend_request(
+        friendship_id = send_friend_request(
             recipient_id=str(data.recipient_user_id),
             access_token=credentials.credentials
         )
@@ -62,6 +62,7 @@ def add_friend(
 
         raise
 
+    return {"friendship_id": str(friendship_id)}
     
 @router.delete("/friendships/{friendship_id}")
 def delete_friend(
