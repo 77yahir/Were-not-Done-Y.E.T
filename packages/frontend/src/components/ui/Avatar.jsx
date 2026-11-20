@@ -1,3 +1,12 @@
+const AVATAR_IDS = [
+  "meeple",
+  "cat",
+  "fox",
+  "bear",
+  "robot",
+  "wizard"
+];
+
 const COLORS = [
   "bg-forest-600",
   "bg-berry-600",
@@ -12,6 +21,12 @@ const SIZES = {
   lg: "size-16 text-2xl",
   xl: "size-24 text-4xl"
 };
+
+function avatarSrc(avatarId) {
+  return AVATAR_IDS.includes(avatarId)
+    ? `/avatars/${avatarId}.png`
+    : null;
+}
 
 // The same name always gets the same color
 function colorFor(name) {
@@ -29,10 +44,12 @@ function colorFor(name) {
 // label is passed
 function Avatar({
   name = "",
+  avatarId = null,
   size = "md",
   label,
   className = ""
 }) {
+  const imageSrc = avatarSrc(avatarId);
   const initial =
     (name ?? "").trim().charAt(0).toUpperCase() || "?";
   const accessibility = label
@@ -43,7 +60,15 @@ function Avatar({
     <span
       {...accessibility}
       className={`inline-flex shrink-0 items-center justify-center rounded-full font-display font-extrabold text-parchment-50 shadow-sm ring-2 ring-parchment-50/80 ${colorFor(name)} ${SIZES[size]} ${className}`}>
-      {initial}
+      {imageSrc ? (
+        <img
+          src={imageSrc}
+          alt=""
+          className="size-full rounded-full object-cover"
+        />
+      ) : (
+        initial
+      )}
     </span>
   );
 }

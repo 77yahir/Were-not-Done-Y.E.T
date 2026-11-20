@@ -9,7 +9,11 @@ import Button from "../ui/Button";
 function FriendCard({ friendship, onRemove, isRemoving }) {
   return (
     <li className="flex min-w-0 flex-col items-center gap-2 rounded-xl border border-parchment-300 bg-parchment-50 p-3 text-center shadow-sm shadow-black/10">
-      <Avatar name={friendship.username} size="lg" />
+      <Avatar
+        name={friendship.username}
+        avatarId={friendship.avatar_id}
+        size="lg"
+      />
 
       <Link
         to={`/users/${friendship.friend_user_id}`}

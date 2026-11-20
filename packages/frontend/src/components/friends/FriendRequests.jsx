@@ -147,7 +147,10 @@ export function FriendRequests({
                   <li
                     key={request.friendship_id}
                     className="flex items-start gap-3 py-3 @sm:items-center">
-                    <Avatar name={request.username} />
+                    <Avatar
+                      name={request.username}
+                      avatarId={request.avatar_id}
+                    />
 
                     <div className="flex min-w-0 flex-1 flex-col gap-2 @sm:flex-row @sm:items-center @sm:justify-between">
                       <p className="wrap-anywhere text-ink-700">
@@ -211,7 +214,10 @@ export function FriendRequests({
                   <li
                     key={request.friendship_id}
                     className="flex items-center gap-3 py-3">
-                    <Avatar name={request.username} />
+                    <Avatar
+                      name={request.username}
+                      avatarId={request.avatar_id}
+                    />
 
                     <p className="min-w-0 flex-1 wrap-anywhere text-ink-700">
                       To:{" "}

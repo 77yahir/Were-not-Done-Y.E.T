@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   searchUsers,
   sendFriendRequest
@@ -10,10 +10,15 @@ import Notice from "../ui/Notice";
 import Panel from "../ui/Panel";
 import { IconSearch, IconUserPlus } from "../ui/icons";
 import { fieldClass } from "../ui/styles";
+import { getSession } from "../../services/auth";
 
 // Failures in red, a sent request in green, anything else plain
 function messageTone(message) {
-  if (message.startsWith("Failed")) return "error";
+  if (
+    message.startsWith("Failed") ||
+    message.startsWith("A friend request")
+  )
+    return "error";
   if (message === "Friend request sent!") return "success";
   return "muted";
 }
@@ -25,6 +30,7 @@ function AddFriend({ onFriendChanged }) {
   const [loading, setLoading] = useState(false);
   const [sendingTo, setSendingTo] = useState(null);
   const [requestedIds, setRequestedIds] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -65,12 +71,32 @@ function AddFriend({ onFriendChanged }) {
 
       onFriendChanged?.();
     } catch (error) {
-      setMessage("Failed to send friend request");
+      if (error.status === 409) {
+        setMessage(
+          "A friend request or friendship already exists"
+        );
+      } else {
+        setMessage("Failed to send friend request");
+      }
       console.error(error);
     } finally {
       setSendingTo(null);
     }
   }
+
+  useEffect(() => {
+    let active = true;
+
+    getSession().then((session) => {
+      if (active) {
+        setCurrentUserId(session?.user?.id ?? null);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <Panel
@@ -110,7 +136,10 @@ function AddFriend({ onFriendChanged }) {
             <li
               key={user.user_id}
               className="flex items-center gap-3 py-2.5">
-              <Avatar name={user.username} />
+              <Avatar
+                name={user.username}
+                avatarId={user.avatar_id}
+              />
 
               <span className="min-w-0 flex-1 wrap-anywhere">
                 <Link
@@ -120,19 +149,26 @@ function AddFriend({ onFriendChanged }) {
                 </Link>
               </span>
 
-              <Button
-                size="sm"
-                onClick={() => handleAddFriend(user.user_id)}
-                disabled={
-                  sendingTo !== null ||
-                  requestedIds.includes(user.user_id)
-                }>
-                {sendingTo === user.user_id
-                  ? "Adding..."
-                  : requestedIds.includes(user.user_id)
-                    ? "Request Sent"
-                    : "Add Friend"}
-              </Button>
+              {currentUserId === user.user_id ? (
+                <span className="rounded-lg bg-parchment-200 px-3 py-2 text-sm font-bold text-ink-700">
+                  This is you
+                </span>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => handleAddFriend(user.user_id)}
+                  disabled={
+                    !currentUserId ||
+                    sendingTo !== null ||
+                    requestedIds.includes(user.user_id)
+                  }>
+                  {sendingTo === user.user_id
+                    ? "Adding..."
+                    : requestedIds.includes(user.user_id)
+                      ? "Request Sent"
+                      : "Add Friend"}
+                </Button>
+              )}
             </li>
           ))}
         </ul>

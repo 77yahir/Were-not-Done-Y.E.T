@@ -103,8 +103,9 @@ export default function UserProfile() {
             <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:gap-6 sm:text-left">
               <Avatar
                 name={profile.username}
+                avatarId={profile.avatar_id}
                 size="xl"
-                label="Default profile avatar"
+                label={`${profile.username}'s avatar`}
               />
 
               <div className="max-w-full min-w-0">

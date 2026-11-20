@@ -73,3 +73,31 @@ export function onAuthChange(callback) {
 
   return () => subscription.unsubscribe();
 }
+
+export async function updatePassword(
+  currentPassword,
+  newPassword
+) {
+  const { data, error } = await supabase.auth.updateUser({
+    current_password: currentPassword,
+    password: newPassword
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function updateEmail(newEmail) {
+  const { data, error } = await supabase.auth.updateUser({
+    email: newEmail
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

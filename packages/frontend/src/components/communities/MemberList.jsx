@@ -185,8 +185,10 @@ export function MemberList({
               key={member.user_id}
               className="flex flex-wrap items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50 p-3 shadow-sm shadow-black/10">
               <div className="flex min-w-0 flex-1 basis-40 items-center gap-3">
-                <Avatar name={member.username} />
-
+                <Avatar
+                  name={member.username}
+                  avatarId={member.avatar_id}
+                />
                 <div className="min-w-0">
                   <Link
                     to={`/users/${member.user_id}`}

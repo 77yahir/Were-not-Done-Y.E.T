@@ -127,7 +127,11 @@ export function PendingRequests({ groupId, onMemberApproved }) {
               key={request.membership_id}
               className="flex flex-wrap items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50 p-3 shadow-sm shadow-black/10">
               <div className="flex min-w-0 flex-1 basis-56 items-center gap-3">
-                <Avatar name={request.username} />
+                <Avatar
+                  name={request.username}
+                  avatarId={request.avatar_id}
+                  size="md"
+                />
 
                 <Link
                   to={`/users/${request.user_id}`}
@@ -135,7 +139,7 @@ export function PendingRequests({ groupId, onMemberApproved }) {
                     from: `/communities/${groupId}`
                   }}
                   className="min-w-0 font-display text-lg leading-tight font-bold wrap-anywhere hover:underline">
-                  {request.username}
+                  {request.username ?? request.user_id}
                 </Link>
               </div>
 

@@ -11,3 +11,23 @@ export async function getUserLibrary(userId) {
     method: "GET"
   });
 }
+
+export async function updateMyUsername(username) {
+  return apiFetch("/users/me", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ username })
+  });
+}
+
+export async function updateMyAvatar(avatarId) {
+  return apiFetch("/users/me/avatar", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ avatar_id: avatarId })
+  });
+}

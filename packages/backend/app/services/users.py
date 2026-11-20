@@ -57,7 +57,6 @@ def get_user_profile(
 
     return response.data[0]
 
-
 def get_user_library(
     user_id: str,
     access_token: str
@@ -70,3 +69,30 @@ def get_user_library(
     ).execute()
 
     return response.data
+
+def update_my_username(
+    username: str,
+    access_token: str
+):
+    client = get_user_supabase_client(access_token)
+
+    response = client.rpc(
+        "update_my_username",
+        {"p_username": username}
+    ).execute()
+
+    return response.data
+
+def update_my_avatar(
+    avatar_id: str | None,
+    access_token: str
+):
+    client = get_user_supabase_client(access_token)
+
+    response = client.rpc(
+        "update_my_avatar",
+        {"p_avatar_id": avatar_id}
+    ).execute()
+
+    return response.data
+
