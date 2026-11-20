@@ -3,7 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from uuid import UUID
 
 from app.core.auth import get_current_user
-from app.services.notifications import get_notifications, mark_as_read, create_notification
+from app.services.notifications import get_notifications, mark_as_read, create_notification, delete_notification
 from app.schemas.notifications import NotificationCreate
 
 router = APIRouter(prefix="/api/notifications", tags=["Notifications"])
@@ -43,3 +43,14 @@ def add_notification(
         message=data.message,
         sender_id=str(user.id)
     )
+
+@router.delete("/{notification_id}", status_code=204)
+def remove_notification(
+    notification_id: UUID,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials=Depends(bearer)
+):
+    try:
+        delete_notification(notification_id, access_token=credentials.credentials)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Notification not found")

@@ -170,6 +170,17 @@ The tests need no seed data. Each test creates its own users and
 data, and the backend tests delete theirs when they finish. The
 UI tests need no servers or database
 
+### Test Driven Development
+
+| File (`packages/backend/tests/`)         | Feature                              | What it checks                                                                                                                                                                                                                                                      |
+| ---------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test_notifications_routes.py`           | Removing notifications               | We tested removing notifications as well as removing a notification that does not exists                                                                                                                                                                            |
+Run: `python -m pytest tests/test_notifications_routes.py -v`
+
+Red: Our inital failure is just Attribute Error in where the function does not exists.
+Green implemented the service and routers for notifications both can be found at `packages/backend/app/services/notifications.py` and `packages/backend/app/routers/notifications.py`
+Refactoring created a `_require_found(result)` that merges the existing notifications checker to see if they exists or not. Duplicate code was found at mark_as_read() and delete_notification()
+
 ### Unit tests
 
 | File (`packages/frontend/src/tests/`) | Feature                              | What it checks                                                                                                                                                                                                                                                      |
