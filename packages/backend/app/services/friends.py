@@ -14,17 +14,15 @@ def search_users(search_term: str, access_token: str):
     return response.data
 
 def send_friend_request(recipient_id: str, access_token: str):
-    
     client = get_user_supabase_client(access_token)
-    user = client.auth.get_user(access_token).user
-    
-    response = client.table("friendships").insert({
-        "requester_user_id": str(user.id),
-        "recipient_user_id": recipient_id,
-        "status": "pending"
-    }).execute()
+
+    response = client.rpc(
+        "send_friend_request",
+        {"p_recipient_id": recipient_id}
+    ).execute()
 
     return response.data
+
 
 def get_my_friend_requests(access_token: str):
     client = get_user_supabase_client(access_token)

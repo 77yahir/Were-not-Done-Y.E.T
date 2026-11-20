@@ -30,14 +30,38 @@ def add_friend(
     user= Depends(get_current_user),
     credentials: HTTPAuthorizationCredentials = Depends(bearer)
 ):
-    friendships = send_friend_request(
-        recipient_id= str(data.recipient_user_id),
-        access_token= credentials.credentials
-    )
-    
-    friendship_id = friendships[0]["friendship_id"]
-    
-    return {"friendship_id": friendship_id}
+    try:
+        friendships = send_friend_request(
+            recipient_id=str(data.recipient_user_id),
+            access_token=credentials.credentials
+        )
+
+    except APIError as error:
+        message = error.message or ""
+
+        if (
+            error.code == "23505"
+            or message == "Friend request or friendship already exists"
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="A friend request or friendship already exists"
+            ) from error
+
+        if message == "Cannot send a friend request to yourself":
+            raise HTTPException(
+                status_code=400,
+                detail=message
+            ) from error
+
+        if message == "Recipient not found":
+            raise HTTPException(
+                status_code=404,
+                detail=message
+            ) from error
+
+        raise
+
     
 @router.delete("/friendships/{friendship_id}")
 def delete_friend(

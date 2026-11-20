@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from supabase import AuthApiError
 from app.core.auth import get_current_user
-from app.schemas.users import SignUp, SignIn, UsernameUpdate
-from app.services.users import create_user, sign_in_user, get_user_profile, get_user_library, update_my_username
+from app.schemas.users import SignUp, SignIn, UsernameUpdate, AvatarUpdate
+from app.services.users import create_user, sign_in_user, get_user_profile, get_user_library, update_my_username, update_my_avatar
 from uuid import UUID
 from postgrest.exceptions import APIError
 
@@ -53,6 +53,19 @@ def update_my_username_endpoint(
             ) from error
 
         raise
+    
+@router.patch("/me/avatar")
+def update_my_avatar_endpoint(
+    body: AvatarUpdate,
+    user=Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer)
+):
+    avatar_id = update_my_avatar(
+        avatar_id=body.avatar_id,
+        access_token=credentials.credentials
+    )
+
+    return {"avatar_id": avatar_id}
 
 @router.get("/{user_id}")
 def get_user_profile_endpoint(
@@ -102,4 +115,5 @@ def get_user_library_endpoint(
             ) from error
 
         raise
-    
+
+

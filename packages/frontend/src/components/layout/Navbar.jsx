@@ -24,7 +24,7 @@ const NAV_LINKS = [
 
 // The dark wood bar at the top of every logged-in page. On wide
 // screens it's one 64px row. Narrower, the links move to a second row
-function Navbar({ displayName }) {
+function Navbar({ displayName, avatarId }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -74,7 +74,11 @@ function Navbar({ displayName }) {
               className="flex cursor-pointer items-center gap-2 rounded-full py-1 pr-2 pl-1 text-parchment-100 transition-colors hover:bg-wood-700/70"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-expanded={menuOpen}>
-              <Avatar name={displayName} size="sm" />
+              <Avatar
+                name={displayName}
+                avatarId={avatarId}
+                size="sm"
+              />
               {/* Hidden on smaller screens, but still the button's name */}
               <span className="sr-only max-w-32 truncate text-sm font-bold xl:not-sr-only">
                 {displayName}

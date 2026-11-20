@@ -21,3 +21,13 @@ export async function updateMyUsername(username) {
     body: JSON.stringify({ username })
   });
 }
+
+export async function updateMyAvatar(avatarId) {
+  return apiFetch("/users/me/avatar", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ avatar_id: avatarId })
+  });
+}

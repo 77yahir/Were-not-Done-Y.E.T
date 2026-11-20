@@ -9,6 +9,7 @@ function PageLayout() {
   // undefined = still checking, null = logged out
   const [session, setSession] = useState(undefined);
   const [displayName, setDisplayName] = useState("");
+  const [avatarId, setAvatarId] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -34,19 +35,22 @@ function PageLayout() {
   useEffect(() => {
     let active = true;
 
-    async function loadUsername() {
+    async function loadProfile() {
       if (!session?.user?.id) {
         setDisplayName("");
+        setAvatarId(null);
         return;
       }
 
       setDisplayName("");
+      setAvatarId(null);
 
       try {
         const result = await getUserProfile(session.user.id);
 
         if (active) {
           setDisplayName(result.profile.username);
+          setAvatarId(result.profile.avatar_id ?? null);
         }
       } catch (error) {
         console.error("Failed to load navbar username:", error);
@@ -57,11 +61,12 @@ function PageLayout() {
               session.user.email ||
               ""
           );
+          setAvatarId(null);
         }
       }
     }
 
-    loadUsername();
+    loadProfile();
 
     return () => {
       active = false;
@@ -78,9 +83,13 @@ function PageLayout() {
 
   return (
     <>
-      <Navbar user={session.user} displayName={displayName} />
+      <Navbar
+        user={session.user}
+        displayName={displayName}
+        avatarId={avatarId}
+      />
       <main className="mx-auto w-full max-w-[90rem] px-3 py-5 sm:px-5 lg:py-6">
-        <Outlet context={{ setDisplayName }} />
+        <Outlet context={{ setDisplayName, setAvatarId }} />
       </main>
     </>
   );

@@ -13,7 +13,11 @@ import { IconUsers } from "../ui/icons";
 import EmptyState from "./EmptyState";
 import RolePill from "./RolePill";
 
-export function MemberList({ groupId, permissions }) {
+export function MemberList({
+  groupId,
+  permissions,
+  refreshVersion = 0
+}) {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -137,7 +141,7 @@ export function MemberList({ groupId, permissions }) {
       ignore = true;
       generationRef.current += 1;
     };
-  }, [groupId]);
+  }, [groupId, refreshVersion]);
 
   // On wide screens this shares a row with the join requests, and
   // lg:flex-1 gives it all the room they leave
@@ -176,8 +180,10 @@ export function MemberList({ groupId, permissions }) {
               key={member.user_id}
               className="flex flex-wrap items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50 p-3 shadow-sm shadow-black/10">
               <div className="flex min-w-0 flex-1 basis-40 items-center gap-3">
-                <Avatar name={member.username} />
-
+                <Avatar
+                  name={member.username}
+                  avatarId={member.avatar_id}
+                />
                 <div className="min-w-0">
                   <p className="font-display text-lg leading-tight font-bold wrap-anywhere">
                     {member.username}

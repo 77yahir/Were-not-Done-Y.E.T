@@ -14,6 +14,9 @@ function CommunityDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [membersRefreshVersion, setMembersRefreshVersion] =
+    useState(0);
+
   useEffect(() => {
     let ignore = false;
 
@@ -91,10 +94,18 @@ function CommunityDetails() {
             key={groupId}
             groupId={groupId}
             permissions={permissions}
+            refreshVersion={membersRefreshVersion}
           />
 
           {permissions.can_review_requests && (
-            <PendingRequests groupId={groupId} />
+            <PendingRequests
+              groupId={groupId}
+              onMemberApproved={() =>
+                setMembersRefreshVersion(
+                  (version) => version + 1
+                )
+              }
+            />
           )}
         </div>
       )}
